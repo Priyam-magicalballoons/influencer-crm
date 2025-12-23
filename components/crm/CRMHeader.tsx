@@ -124,6 +124,18 @@ export function CRMHeader({
               ))}
             </SelectContent>
           </Select>
+          {/* <Select value={selectedCreator} onValueChange={onCreatorChange}>
+            <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
+              <SelectValue placeholder="Select Brand" />
+            </SelectTrigger>
+            <SelectContent>
+              {creators.map((creator) => (
+                <SelectItem key={creator.id} value={creator.name}>
+                  {creator.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select> */}
 
           {/* <Select value={selectedYear} onValueChange={onYearChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
