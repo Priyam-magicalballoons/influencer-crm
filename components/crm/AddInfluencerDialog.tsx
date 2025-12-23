@@ -22,6 +22,7 @@ import {
   paymentStatuses,
   InfluencerType,
   PaymentStatus,
+  BrandNames,
 } from "@/lib/types";
 
 interface AddInfluencerDialogProps {
@@ -56,6 +57,9 @@ const initialFormState = {
   gpayNumber: "",
   paymentStatus: "" as PaymentStatus | "",
   paymentDoneDate: "",
+  createdBy: "",
+  createdAt: "",
+  brandName: "",
 };
 
 export function AddInfluencerDialog({
@@ -94,6 +98,9 @@ export function AddInfluencerDialog({
         gpayNumber: editingInfluencer.gpayNumber,
         paymentStatus: editingInfluencer.paymentStatus,
         paymentDoneDate: editingInfluencer.paymentDoneDate,
+        brandName: editingInfluencer.brandName,
+        createdAt: editingInfluencer.createdAt,
+        createdBy: editingInfluencer.createdBy,
       });
     } else {
       setForm(initialFormState);
@@ -127,6 +134,9 @@ export function AddInfluencerDialog({
       gpayNumber: form.gpayNumber,
       paymentStatus: form.paymentStatus as PaymentStatus,
       paymentDoneDate: form.paymentDoneDate,
+      createdBy: form.createdBy,
+      createdAt: form.createdAt,
+      brandName: form.brandName,
     };
 
     if (isEditMode && onEdit && editingInfluencer) {
@@ -237,6 +247,34 @@ export function AddInfluencerDialog({
             </div>
           </div>
 
+          {/* Brand Information */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-primary uppercase tracking-wide">
+              Brand Information
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="brandName">Name Of Brand</Label>
+                <Select
+                  value={form.brandName}
+                  onValueChange={(value) => updateField("brandName", value)}
+                  required
+                >
+                  <SelectTrigger className="bg-secondary/50 border-border">
+                    <SelectValue placeholder="Select Brand" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {BrandNames.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
           {/* Financial Information */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-primary uppercase tracking-wide">
@@ -268,9 +306,10 @@ export function AddInfluencerDialog({
                 <Input
                   id="totalAmount"
                   type="number"
-                  value={form.totalAmount}
+                  value={Number(form.payout) + Number(form.productAmount)}
                   onChange={(e) => updateField("totalAmount", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  readOnly
                 />
               </div>
             </div>
@@ -324,21 +363,31 @@ export function AddInfluencerDialog({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
+                <Label htmlFor="mail">Mail Sent</Label>
+                <Select
+                  value={form.mail}
+                  onValueChange={(value) => updateField("mail", value)}
+                  required
+                >
+                  <SelectTrigger className="bg-secondary/50 border-border">
+                    <SelectValue placeholder="Select Mail" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {["YES", "NO"].map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="reelLink">Reel Link</Label>
                 <Input
                   id="reelLink"
                   type="url"
                   value={form.reelLink}
                   onChange={(e) => updateField("reelLink", e.target.value)}
-                  className="bg-secondary/50 border-border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="mail">Mail</Label>
-                <Input
-                  id="mail"
-                  value={form.mail}
-                  onChange={(e) => updateField("mail", e.target.value)}
                   className="bg-secondary/50 border-border"
                 />
               </div>
