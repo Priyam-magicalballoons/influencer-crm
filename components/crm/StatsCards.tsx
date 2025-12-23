@@ -46,18 +46,18 @@ export function StatsCards({ influencers }: StatsCardsProps) {
       bgColor: "bg-primary/10",
     },
     {
-      title: "Reels Published",
-      value: formatNumber(reelsPublished),
-      icon: InstagramIcon,
-      color: "text-[#14A44D]",
-      bgColor: "bg-[#14A44D]/10",
-    },
-    {
       title: "Total Ordered",
       value: formatNumber(totalOrdered),
       icon: ListOrderedIcon,
       color: "text-blue-300",
       bgColor: "bg-blue-300/10",
+    },
+    {
+      title: "Reels Published",
+      value: formatNumber(reelsPublished),
+      icon: InstagramIcon,
+      color: "text-[#14A44D]",
+      bgColor: "bg-[#14A44D]/10",
     },
     {
       title: "Payments Done",
