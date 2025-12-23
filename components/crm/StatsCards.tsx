@@ -1,4 +1,11 @@
-import { Users, DollarSign, TrendingUp, Eye } from "lucide-react";
+import {
+  Users,
+  DollarSign,
+  TrendingUp,
+  Eye,
+  InstagramIcon,
+  ListOrderedIcon,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Influencer } from "@/lib/types";
 
@@ -13,6 +20,8 @@ export function StatsCards({ influencers }: StatsCardsProps) {
   const completedPayments = influencers.filter(
     (i) => i.paymentStatus === "Completed"
   ).length;
+  const reelsPublished = influencers.filter((i) => i.reelLink).length;
+  const totalOrdered = influencers.filter((i) => i.orderDate).length;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -37,16 +46,16 @@ export function StatsCards({ influencers }: StatsCardsProps) {
       bgColor: "bg-primary/10",
     },
     {
-      title: "Total Payout",
-      value: formatCurrency(totalPayout),
-      icon: DollarSign,
+      title: "Reels Published",
+      value: formatNumber(reelsPublished),
+      icon: InstagramIcon,
       color: "text-[#14A44D]",
       bgColor: "bg-[#14A44D]/10",
     },
     {
-      title: "Total Views",
-      value: formatNumber(totalViews),
-      icon: Eye,
+      title: "Total Ordered",
+      value: formatNumber(totalOrdered),
+      icon: ListOrderedIcon,
       color: "text-blue-300",
       bgColor: "bg-blue-300/10",
     },
