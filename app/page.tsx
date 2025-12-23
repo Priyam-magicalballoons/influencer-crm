@@ -16,6 +16,9 @@ const sampleInfluencers: Influencer[] = [
   {
     id: "1",
     srNo: 1,
+    createdBy: "DHANASHREE",
+    createdAt: "2025-12-22",
+    brandName: "CIPLA",
     name: "Priya Sharma",
     profileLink: "https://instagram.com/priyasharma",
     followers: 125000,
@@ -43,6 +46,9 @@ const sampleInfluencers: Influencer[] = [
   {
     id: "2",
     srNo: 2,
+    createdBy: "DHANASHREE",
+    createdAt: "2025-12-22",
+    brandName: "OPPO",
     name: "Rahul Verma",
     profileLink: "https://instagram.com/rahulverma",
     followers: 45000,
@@ -69,6 +75,9 @@ const sampleInfluencers: Influencer[] = [
   },
   {
     id: "3",
+    createdBy: "SANJEET",
+    createdAt: "2025-12-02",
+    brandName: "AJANTA",
     srNo: 3,
     name: "Ananya Patel",
     profileLink: "https://instagram.com/ananyapatel",
@@ -103,6 +112,7 @@ const Index = () => {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedCreator, setSelectedCreator] = useState("All Creators");
   const [editingInfluencer, setEditingInfluencer] = useState<Influencer | null>(
     null
   );
@@ -136,8 +146,14 @@ const Index = () => {
       );
     }
 
+    if (selectedCreator !== "All Creators") {
+      filtered = filtered.filter((influencer) => {
+        return influencer.createdBy === selectedCreator;
+      });
+    }
+
     return filtered;
-  }, [influencers, searchQuery, selectedMonth, selectedYear]);
+  }, [influencers, searchQuery, selectedMonth, selectedYear, selectedCreator]);
 
   const handleExportExcel = useCallback(() => {
     const exportData = filteredInfluencers.map((inf) => ({
@@ -246,6 +262,8 @@ const Index = () => {
         selectedYear={selectedYear}
         onYearChange={setSelectedYear}
         onExport={handleExportExcel}
+        onCreatorChange={setSelectedCreator}
+        selectedCreator={selectedCreator}
       />
 
       <StatsCards influencers={influencers} />

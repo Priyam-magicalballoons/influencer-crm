@@ -1,4 +1,11 @@
-import { Plus, Search, Users, Download, Calendar } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Users,
+  Download,
+  Calendar,
+  LogOutIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,6 +41,21 @@ const years = [
   })),
 ];
 
+const creators = [
+  {
+    id: "0",
+    name: "All Creators",
+  },
+  {
+    id: "1",
+    name: "DHANASHREE",
+  },
+  {
+    id: "2",
+    name: "SANJEET",
+  },
+];
+
 interface CRMHeaderProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -43,6 +65,8 @@ interface CRMHeaderProps {
   onMonthChange: (value: string) => void;
   selectedYear: string;
   onYearChange: (value: string) => void;
+  selectedCreator: string;
+  onCreatorChange: (value: string) => void;
   onExport: () => void;
 }
 
@@ -56,6 +80,8 @@ export function CRMHeader({
   selectedYear,
   onYearChange,
   onExport,
+  onCreatorChange,
+  selectedCreator,
 }: CRMHeaderProps) {
   return (
     <header className="border-b border-border bg-card px-6 py-4">
@@ -82,9 +108,22 @@ export function CRMHeader({
               placeholder="Search influencers..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-48 pl-9 bg-secondary/50 border-border"
+              className="w-48 pl-9 bg-secondary/50 border-border text-white"
             />
           </div>
+
+          <Select value={selectedCreator} onValueChange={onCreatorChange}>
+            <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
+              <SelectValue placeholder="Creator" />
+            </SelectTrigger>
+            <SelectContent>
+              {creators.map((creator) => (
+                <SelectItem key={creator.id} value={creator.name}>
+                  {creator.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Select value={selectedYear} onValueChange={onYearChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
@@ -121,6 +160,14 @@ export function CRMHeader({
           <Button onClick={onAddClick} className="gap-2">
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline">Add Influencer</span>
+          </Button>
+          <Button
+            onClick={onAddClick}
+            className="gap-2"
+            variant={"destructive"}
+          >
+            <LogOutIcon className="h-4 w-4" />
+            <span className="hidden md:inline">Logout</span>
           </Button>
         </div>
       </div>
