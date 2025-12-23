@@ -202,6 +202,7 @@ export function AddInfluencerDialog({
                   value={form.followers}
                   onChange={(e) => updateField("followers", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  step={100}
                 />
               </div>
               <div className="space-y-2">
@@ -289,6 +290,7 @@ export function AddInfluencerDialog({
                   value={form.payout}
                   onChange={(e) => updateField("payout", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  step={100}
                 />
               </div>
               <div className="space-y-2">
@@ -373,7 +375,7 @@ export function AddInfluencerDialog({
                     <SelectValue placeholder="Select Mail" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
-                    {["YES", "NO"].map((type) => (
+                    {["Sent", "Pending"].map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
                       </SelectItem>

@@ -35,10 +35,6 @@ function getPaymentStatusVariant(status: PaymentStatus) {
   switch (status) {
     case "Completed":
       return "default";
-    case "Processing":
-      return "secondary";
-    case "Failed":
-      return "destructive";
     default:
       return "secondary";
   }
@@ -63,7 +59,19 @@ export function InfluencerTable({
         <TableHeader>
           <TableRow className="hover:bg-transparent border-border">
             <TableHead className="w-16 text-muted-foreground font-medium">
+              {/* Sr.No. */}
+            </TableHead>
+            <TableHead className="w-16 text-muted-foreground font-medium">
               Sr.No.
+            </TableHead>
+            <TableHead className="min-w-35 text-muted-foreground font-medium">
+              CreatedBy
+            </TableHead>
+            <TableHead className="min-w-35 text-muted-foreground font-medium">
+              CreatedAt
+            </TableHead>
+            <TableHead className="min-w-35 text-muted-foreground font-medium">
+              Brand
             </TableHead>
             <TableHead className="min-w-35 text-muted-foreground font-medium">
               Name
@@ -143,11 +151,32 @@ export function InfluencerTable({
           {influencers.map((influencer, index) => (
             <TableRow
               key={influencer.id}
-              className="border-border hover:bg-muted/50 transition-colors"
+              className={`hover:bg-muted/50 transition-colors  
+                
+              `}
               style={{ animationDelay: `${index * 50}ms` }}
             >
+              <TableCell
+                className={`border-border hover:bg-muted/50 transition-colors sticky left-0 ${
+                  influencer.reelLink && "bg-orange-500 hover:bg-orange-500/80"
+                } ${
+                  influencer.paymentStatus === "Completed" &&
+                  "bg-green-500 hover:bg-green-500/80"
+                }`}
+              >
+                {/* {influencer.srNo} */}
+              </TableCell>
               <TableCell className="font-medium text-foreground text-center">
                 {influencer.srNo}
+              </TableCell>
+              <TableCell className="font-medium text-foreground ">
+                {influencer.createdBy}
+              </TableCell>
+              <TableCell className="font-medium text-foreground ">
+                {influencer.createdAt}
+              </TableCell>
+              <TableCell className="font-medium text-foreground ">
+                {influencer.brandName}
               </TableCell>
               <TableCell className="font-medium text-foreground ">
                 {influencer.name}
@@ -226,7 +255,7 @@ export function InfluencerTable({
                   </a>
                 )}
               </TableCell>
-              <TableCell className="text-muted-foreground max-w-[150px] truncate">
+              <TableCell className="text-muted-foreground max-w-37.5 truncate">
                 {influencer.review}
               </TableCell>
               <TableCell className="text-foreground">

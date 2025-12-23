@@ -125,7 +125,7 @@ export function CRMHeader({
             </SelectContent>
           </Select>
 
-          <Select value={selectedYear} onValueChange={onYearChange}>
+          {/* <Select value={selectedYear} onValueChange={onYearChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
@@ -136,9 +136,9 @@ export function CRMHeader({
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
 
-          <Select value={selectedMonth} onValueChange={onMonthChange}>
+          {/* <Select value={selectedMonth} onValueChange={onMonthChange}>
             <SelectTrigger className="w-34 md:w-40 bg-secondary/50 border-border text-neutral-400">
               <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
               <SelectValue placeholder="Month" />
@@ -150,25 +150,25 @@ export function CRMHeader({
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
 
-          <Button variant="outline" onClick={onExport} className="gap-2">
+          {/* <Button variant="outline" onClick={onExport} className="gap-2">
             <Download className="h-4 w-4 text-neutral-400" />
             <span className="text-neutral-400 font-normal">Export Excel</span>
-          </Button>
+          </Button> */}
 
           <Button onClick={onAddClick} className="gap-2">
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline">Add Influencer</span>
           </Button>
-          <Button
+          {/* <Button
             onClick={onAddClick}
             className="gap-2"
             variant={"destructive"}
           >
             <LogOutIcon className="h-4 w-4" />
             <span className="hidden md:inline">Logout</span>
-          </Button>
+          </Button> */}
         </div>
       </div>
     </header>
