@@ -142,6 +142,12 @@ export function InfluencerTable({
             <TableHead className="min-w-30 text-muted-foreground font-medium">
               Payment Done
             </TableHead>
+            <TableHead className="min-w-30 text-muted-foreground font-medium">
+              Approval Required
+            </TableHead>
+            <TableHead className="min-w-30 text-muted-foreground font-medium text-center">
+              Approval Status
+            </TableHead>
             <TableHead className="min-w-20 md:min-w-25 text-muted-foreground font-medium sticky right-0 bg-card">
               Actions
             </TableHead>
@@ -151,15 +157,23 @@ export function InfluencerTable({
           {influencers.map((influencer, index) => (
             <TableRow
               key={influencer.id}
-              className={`hover:bg-muted/50 transition-colors  
-                
+              className={`hover:bg-muted/50 transition-colors ${
+                influencer.approvalRequired &&
+                !influencer.approved &&
+                "bg-red-900 hover:bg-red-900/80"
+              }
               `}
-              style={{ animationDelay: `${index * 50}ms` }}
+              style={{
+                animationDelay: `${index * 50}ms`,
+              }}
             >
               <TableCell
-                className={`border-border hover:bg-muted/50 transition-colors sticky left-0 ${
-                  influencer.reelLink && "bg-orange-500 hover:bg-orange-500/80"
-                } ${
+                className={`border-border hover:bg-muted/50 transition-colors sticky left-0
+                  ${influencer.orderDate && "bg-blue-400 hover:bg-blue-500/80"}
+                  ${
+                    influencer.reelLink &&
+                    "bg-orange-500 hover:bg-orange-500/80"
+                  } ${
                   influencer.paymentStatus === "Completed" &&
                   "bg-green-500 hover:bg-green-500/80"
                 }`}
@@ -282,6 +296,16 @@ export function InfluencerTable({
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {influencer.paymentDoneDate}
+              </TableCell>
+              <TableCell className="text-muted-foreground text-center">
+                {influencer.approvalRequired ? "YES" : "NO"}
+              </TableCell>
+              <TableCell className="text-muted-foreground text-center min-w-64 whitespace-pre-wrap line-clamp-3">
+                {influencer.approved
+                  ? influencer.approved === "OTHER"
+                    ? influencer.approvalComment
+                    : influencer.approved
+                  : "-"}
               </TableCell>
               <TableCell className="sticky right-0 bg-card">
                 <div className="flex items-center gap-1">
