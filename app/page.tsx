@@ -42,6 +42,9 @@ const sampleInfluencers: Influencer[] = [
     gpayNumber: "9876543210",
     paymentStatus: "Completed",
     paymentDoneDate: "2024-01-25",
+    approvalRequired: true,
+    approved: "YES",
+    approvalComment: "New Comment",
   },
   {
     id: "2",
@@ -72,6 +75,7 @@ const sampleInfluencers: Influencer[] = [
     gpayNumber: "8765432109",
     paymentStatus: "Pending",
     paymentDoneDate: "",
+    approvalRequired: false,
   },
   {
     id: "3",
@@ -102,6 +106,7 @@ const sampleInfluencers: Influencer[] = [
     gpayNumber: "7654321098",
     paymentStatus: "Completed",
     paymentDoneDate: "2024-01-18",
+    approvalRequired: true,
   },
 ];
 
@@ -113,6 +118,7 @@ const Index = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedCreator, setSelectedCreator] = useState("All Creators");
+  const [selectedBrand, setSelectedBrand] = useState("ALL Brands");
   const [editingInfluencer, setEditingInfluencer] = useState<Influencer | null>(
     null
   );
@@ -152,8 +158,21 @@ const Index = () => {
       });
     }
 
+    if (selectedBrand !== "ALL Brands") {
+      filtered = filtered.filter((influencer) => {
+        return influencer.brandName === selectedBrand;
+      });
+    }
+
     return filtered;
-  }, [influencers, searchQuery, selectedMonth, selectedYear, selectedCreator]);
+  }, [
+    influencers,
+    searchQuery,
+    selectedMonth,
+    selectedYear,
+    selectedCreator,
+    selectedBrand,
+  ]);
 
   const handleExportExcel = useCallback(() => {
     const exportData = filteredInfluencers.map((inf) => ({
@@ -264,6 +283,8 @@ const Index = () => {
         onExport={handleExportExcel}
         onCreatorChange={setSelectedCreator}
         selectedCreator={selectedCreator}
+        selectedBrand={selectedBrand}
+        onSelectedBrandChange={setSelectedBrand}
       />
 
       <StatsCards influencers={influencers} />
