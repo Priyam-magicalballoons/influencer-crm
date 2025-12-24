@@ -60,6 +60,9 @@ const initialFormState = {
   createdBy: "",
   createdAt: "",
   brandName: "",
+  approvalRequired: false,
+  approved: "",
+  approvalComment: "",
 };
 
 export function AddInfluencerDialog({
@@ -101,6 +104,9 @@ export function AddInfluencerDialog({
         brandName: editingInfluencer.brandName,
         createdAt: editingInfluencer.createdAt,
         createdBy: editingInfluencer.createdBy,
+        approvalRequired: editingInfluencer.approvalRequired,
+        approvalComment: editingInfluencer.approvalComment || "",
+        approved: editingInfluencer.approved || "",
       });
     } else {
       setForm(initialFormState);
@@ -137,6 +143,9 @@ export function AddInfluencerDialog({
       createdBy: form.createdBy,
       createdAt: form.createdAt,
       brandName: form.brandName,
+      approvalRequired: form.approvalRequired,
+      approved: form.approved,
+      approvalComment: form.approvalComment,
     };
 
     if (isEditMode && onEdit && editingInfluencer) {
@@ -153,7 +162,7 @@ export function AddInfluencerDialog({
     onOpenChange(false);
   };
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: string, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -315,6 +324,74 @@ export function AddInfluencerDialog({
                 />
               </div>
             </div>
+          </div>
+          {/*  Approval Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-primary uppercase tracking-wide">
+              Approval Required
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="approvalRequired">Approval Required ?</Label>
+                <Select
+                  value={form.approvalRequired ? "YES" : "NO"}
+                  onValueChange={(value) =>
+                    updateField(
+                      "approvalRequired",
+                      value === "YES" ? true : false
+                    )
+                  }
+                  required
+                >
+                  <SelectTrigger className="bg-secondary/50 border-border">
+                    <SelectValue placeholder="Select Approval" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {["YES", "NO"].map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="approved">Approve</Label>
+                <Select
+                  value={form.approved}
+                  onValueChange={(value) => updateField("approved", value)}
+                  required
+                >
+                  <SelectTrigger className="bg-secondary/50 border-border">
+                    <SelectValue placeholder="Select Approval" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {["YES", "NO", "OTHER"].map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            {form.approved === "OTHER" && (
+              <div className="space-y-2">
+                <Label htmlFor="approvalComment">Approval Comment</Label>
+                <Textarea
+                  id="approvalComment"
+                  value={form.approvalComment}
+                  onChange={(e) =>
+                    updateField("approvalComment", e.target.value)
+                  }
+                  placeholder="Enter Approval Comment..."
+                  className="bg-secondary/50 border-border resize-none w-full"
+                  rows={3}
+                  required
+                />
+              </div>
+            )}
           </div>
 
           {/* Dates */}
