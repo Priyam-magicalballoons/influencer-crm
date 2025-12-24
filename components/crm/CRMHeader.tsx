@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BrandNames } from "@/lib/types";
 
 const months = [
   { value: "all", label: "All Months" },
@@ -68,6 +69,8 @@ interface CRMHeaderProps {
   selectedCreator: string;
   onCreatorChange: (value: string) => void;
   onExport: () => void;
+  selectedBrand: string;
+  onSelectedBrandChange: (value: string) => void;
 }
 
 export function CRMHeader({
@@ -82,6 +85,8 @@ export function CRMHeader({
   onExport,
   onCreatorChange,
   selectedCreator,
+  onSelectedBrandChange,
+  selectedBrand,
 }: CRMHeaderProps) {
   return (
     <header className="border-b border-border bg-card px-6 py-4">
@@ -124,18 +129,19 @@ export function CRMHeader({
               ))}
             </SelectContent>
           </Select>
-          {/* <Select value={selectedCreator} onValueChange={onCreatorChange}>
+
+          <Select value={selectedBrand} onValueChange={onSelectedBrandChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
               <SelectValue placeholder="Select Brand" />
             </SelectTrigger>
             <SelectContent>
-              {creators.map((creator) => (
-                <SelectItem key={creator.id} value={creator.name}>
-                  {creator.name}
+              {BrandNames.map((brand) => (
+                <SelectItem key={brand} value={brand}>
+                  {brand}
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select> */}
+          </Select>
 
           {/* <Select value={selectedYear} onValueChange={onYearChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
