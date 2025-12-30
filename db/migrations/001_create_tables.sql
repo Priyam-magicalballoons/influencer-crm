@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- CREATE TYPE ROLES AS ENUM('ADMIN','CREATOR');
 
--- CREATE TYPE YN AS ENUM('YES','NO');
+-- CREATE TYPE YN AS ENUM('YES','NO','');
 
 -- CREATE TYPE INFLUENCER_TYPE AS ENUM('Nano (1K-10K)','Micro (10K-50K)','Macro (500K-1M)','Celebrity (1M+)');
 
@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- CREATE TYPE PAYMENT_STATUS AS ENUM('Completed','Pending');
 
--- CREATE TYPE APPROVAL_STATUS AS ENUM('YES','NO','OTHER');
+-- CREATE TYPE APPROVAL_STATUS AS ENUM('YES','NO','OTHER','');
 
 CREATE TABLE IF NOT EXISTS users(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS influencers(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     profile VARCHAR(200) NOT NULL,
-    brand_name UUID NOT NULL,
+    brand_name VARCHAR(200),
     followers VARCHAR(50),
     type INFLUENCER_TYPE,
     email VARCHAR(200),
@@ -61,8 +61,9 @@ CREATE TABLE IF NOT EXISTS brand(
 
 -- ALTER TABLE influencers DROP CONSTRAINT fk_brand_name;
 
-ALTER TABLE influencers ALTER COLUMN brand_name TYPE VARCHAR(255);
+-- ALTER TABLE influencers ALTER COLUMN brand_name TYPE VARCHAR(255);
 
-ALTER TABLE influencers ADD CONSTRAINT fk_brand_name FOREIGN KEY(brand_name) REFERENCES brand(name);
+-- ALTER TABLE influencers ADD CONSTRAINT fk_brand_name FOREIGN KEY(brand_name) REFERENCES brand(name);
+
 -- ALTER TABLE influencers ADD CONSTRAINT fk_creator FOREIGN KEY(creator_id) REFERENCES users(id);
 

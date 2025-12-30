@@ -1,0 +1,1 @@
+ALTER TABLE influencers ALTER COLUMN brand_name TYPE VARCHAR(255);
