@@ -231,12 +231,12 @@ const page = () => {
       Views: inf.views,
       Likes: inf.likes,
       Comments: inf.comments,
-      "Payment Date": inf.isValid(inf.payment_date)
+      "Payment Date": isValid(inf.payment_date)
         ? format(inf.payment_date, "do-MMM-yyyy")
         : "",
       "Gpay Number": inf.gpay_number,
       "Payment Status": inf.payment_status,
-      "Payment Done Date": inf.isValid(inf.payment_done)
+      "Payment Done Date": isValid(inf.payment_done)
         ? format(inf.payment_done, "do-MMM-yyyy")
         : "",
       "Approval Required": inf.approval_required,
