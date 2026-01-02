@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Plus,
   Search,
@@ -15,7 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BrandNames } from "@/lib/types";
+import { useEffect, useState } from "react";
+import { getDataFromRedis } from "@/redis";
+import { useRouter } from "next/navigation";
+import { getUserData, logoutUser } from "@/lib/helpers";
+import { useUser } from "@/lib/store";
 
 const months = [
   { value: "all", label: "All Months" },
@@ -42,21 +48,6 @@ const years = [
   })),
 ];
 
-const creators = [
-  {
-    id: "0",
-    name: "All Creators",
-  },
-  {
-    id: "1",
-    name: "DHANASHREE",
-  },
-  {
-    id: "2",
-    name: "SANJEET",
-  },
-];
-
 interface CRMHeaderProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -71,6 +62,9 @@ interface CRMHeaderProps {
   onExport: () => void;
   selectedBrand: string;
   onSelectedBrandChange: (value: string) => void;
+  openAddBrand: (value: boolean) => void;
+  openAddCreator: (value: boolean) => void;
+  role: "ADMIN" | "CREATOR";
 }
 
 export function CRMHeader({
@@ -87,7 +81,33 @@ export function CRMHeader({
   selectedCreator,
   onSelectedBrandChange,
   selectedBrand,
+  openAddBrand,
+  openAddCreator,
+  role,
 }: CRMHeaderProps) {
+  const [creators, setCreators] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
+  const router = useRouter();
+
+  const getCreators = async () => {
+    const data = await getDataFromRedis("creators");
+    setCreators([{ id: "0", name: "All Creators" }, ...(data as any)]);
+  };
+
+  const getBrands = async () => {
+    const data = await getDataFromRedis("brand");
+    setBrands([{ id: "0", name: "All Brands" }, ...(data as any)]);
+  };
+  useEffect(() => {
+    getCreators();
+    getBrands();
+  }, []);
+
+  const handleLogout = async () => {
+    localStorage.removeItem("user");
+    await logoutUser();
+  };
+
   return (
     <header className="border-b border-border bg-card px-6 py-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -123,7 +143,7 @@ export function CRMHeader({
             </SelectTrigger>
             <SelectContent>
               {creators.map((creator) => (
-                <SelectItem key={creator.id} value={creator.name}>
+                <SelectItem key={creator.id} value={creator.id}>
                   {creator.name}
                 </SelectItem>
               ))}
@@ -135,9 +155,9 @@ export function CRMHeader({
               <SelectValue placeholder="Select Brand" />
             </SelectTrigger>
             <SelectContent>
-              {BrandNames.map((brand) => (
-                <SelectItem key={brand} value={brand}>
-                  {brand}
+              {brands.map((brand) => (
+                <SelectItem key={brand.name} value={brand.name}>
+                  {brand.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -175,18 +195,30 @@ export function CRMHeader({
             <span className="text-neutral-400 font-normal">Export Excel</span>
           </Button> */}
 
+          {role === "ADMIN" && (
+            <>
+              <Button onClick={() => openAddBrand(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                <span className="hidden md:inline">Add Brand</span>
+              </Button>
+              <Button onClick={() => openAddCreator(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                <span className="hidden md:inline">Add Creator</span>
+              </Button>
+            </>
+          )}
           <Button onClick={onAddClick} className="gap-2">
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline">Add Influencer</span>
           </Button>
-          {/* <Button
-            onClick={onAddClick}
+          <Button
+            onClick={handleLogout}
             className="gap-2"
             variant={"destructive"}
           >
             <LogOutIcon className="h-4 w-4" />
             <span className="hidden md:inline">Logout</span>
-          </Button> */}
+          </Button>
         </div>
       </div>
     </header>

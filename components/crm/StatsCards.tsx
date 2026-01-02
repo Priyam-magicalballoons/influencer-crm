@@ -17,13 +17,13 @@ interface StatsCardsProps {
 
 export function StatsCards({ influencers }: StatsCardsProps) {
   const totalInfluencers = influencers.length;
-  const totalPayout = influencers.reduce((sum, i) => sum + i.payout, 0);
-  const totalViews = influencers.reduce((sum, i) => sum + i.views, 0);
+  const totalPayout = influencers.reduce((sum, i) => sum + i.payout!, 0);
+  // const totalViews = influencers.reduce((sum, i) => sum + i.views, 0);
   const completedPayments = influencers.filter(
-    (i) => i.paymentStatus === "Completed"
+    (i) => i.payment_status === "Completed"
   ).length;
-  const reelsPublished = influencers.filter((i) => i.reelLink).length;
-  const totalOrdered = influencers.filter((i) => i.orderDate).length;
+  const reelsPublished = influencers.filter((i) => i.reel_link).length;
+  const totalOrdered = influencers.filter((i) => i.order_date).length;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {

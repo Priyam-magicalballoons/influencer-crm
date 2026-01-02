@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -24,6 +26,9 @@ import {
   PaymentStatus,
   BrandNames,
 } from "@/lib/types";
+import { getDataFromRedis } from "@/redis";
+import { getUserData } from "@/lib/helpers";
+// import { handleNumberStep } from "@/lib/helpers";
 
 interface AddInfluencerDialogProps {
   open: boolean;
@@ -31,39 +36,40 @@ interface AddInfluencerDialogProps {
   onAdd: (influencer: Omit<Influencer, "id" | "srNo">) => void;
   onEdit?: (influencer: Influencer) => void;
   editingInfluencer?: Influencer | null;
+  role: "ADMIN" | "CREATOR";
 }
 
 const initialFormState = {
   name: "",
-  profileLink: "",
+  profile: "",
   followers: "",
-  typeOfInfluencer: "" as InfluencerType | "",
+  type: "" as InfluencerType | "",
   email: "",
-  contactNumber: "",
-  payout: "",
-  productAmount: "",
-  totalAmount: "",
-  orderDate: "",
-  receiveDate: "",
-  publishedReelDate: "",
-  reelLink: "",
-  mail: "",
+  number: "",
+  payout: 0,
+  product_amount: 0,
+  total_amount: 0,
+  order_date: "",
+  receive_date: "",
+  published_date: "",
+  reel_link: "",
+  mail_status: "Pending",
   photo: "",
   review: "",
   views: "",
   likes: "",
   comments: "",
-  paymentDate: "",
-  gpayNumber: "",
-  paymentStatus: "" as PaymentStatus | "",
-  paymentDoneDate: "",
-  createdBy: "",
-  createdAt: "",
-  brandName: "",
-  approvalRequired: false,
-  approved: "",
-  approvalComment: "",
-};
+  payment_date: "",
+  gpay_number: "",
+  payment_status: "Pending" as PaymentStatus | "",
+  payment_done: "",
+  creator_id: "",
+  created_at: "",
+  brand_name: "",
+  approval_required: "",
+  approval_status: "",
+  approval_comment: "",
+} as Influencer;
 
 export function AddInfluencerDialog({
   open,
@@ -71,42 +77,52 @@ export function AddInfluencerDialog({
   onAdd,
   onEdit,
   editingInfluencer,
+  role,
 }: AddInfluencerDialogProps) {
   const [form, setForm] = useState(initialFormState);
   const isEditMode = !!editingInfluencer;
+  const [brands, setBrands] = useState<any[]>([]);
+
+  const getBrands = async () => {
+    const data = await getDataFromRedis("brand");
+    setBrands(data as any);
+  };
+  useEffect(() => {
+    getBrands();
+  }, []);
 
   useEffect(() => {
     if (editingInfluencer) {
       setForm({
         name: editingInfluencer.name,
-        profileLink: editingInfluencer.profileLink,
-        followers: editingInfluencer.followers.toString(),
-        typeOfInfluencer: editingInfluencer.typeOfInfluencer,
-        email: editingInfluencer.email,
-        contactNumber: editingInfluencer.contactNumber,
-        payout: editingInfluencer.payout.toString(),
-        productAmount: editingInfluencer.productAmount.toString(),
-        totalAmount: editingInfluencer.totalAmount.toString(),
-        orderDate: editingInfluencer.orderDate,
-        receiveDate: editingInfluencer.receiveDate,
-        publishedReelDate: editingInfluencer.publishedReelDate,
-        reelLink: editingInfluencer.reelLink,
-        mail: editingInfluencer.mail,
-        photo: editingInfluencer.photo,
-        review: editingInfluencer.review,
-        views: editingInfluencer.views.toString(),
-        likes: editingInfluencer.likes.toString(),
-        comments: editingInfluencer.comments.toString(),
-        paymentDate: editingInfluencer.paymentDate,
-        gpayNumber: editingInfluencer.gpayNumber,
-        paymentStatus: editingInfluencer.paymentStatus,
-        paymentDoneDate: editingInfluencer.paymentDoneDate,
-        brandName: editingInfluencer.brandName,
-        createdAt: editingInfluencer.createdAt,
-        createdBy: editingInfluencer.createdBy,
-        approvalRequired: editingInfluencer.approvalRequired,
-        approvalComment: editingInfluencer.approvalComment || "",
-        approved: editingInfluencer.approved || "",
+        profile: editingInfluencer.profile,
+        followers: editingInfluencer.followers || "",
+        type: editingInfluencer.type,
+        email: editingInfluencer.email || "",
+        contact: editingInfluencer.contact || "",
+        payout: editingInfluencer.payout || 0,
+        product_amount: editingInfluencer.product_amount || 0,
+        total_amount: editingInfluencer.total_amount || 0,
+        order_date: editingInfluencer.order_date,
+        receive_date: editingInfluencer.receive_date ?? "",
+        published_date: editingInfluencer.published_date ?? "",
+        reel_link: editingInfluencer.reel_link || "",
+        mail_status: editingInfluencer.mail_status || "",
+        photo: editingInfluencer.photo || "",
+        review: editingInfluencer.review || "",
+        views: editingInfluencer.views || "",
+        likes: editingInfluencer.likes || "",
+        comments: editingInfluencer.comments || "",
+        payment_date: editingInfluencer.payment_date ?? "",
+        gpay_number: editingInfluencer.gpay_number || "",
+        payment_status: editingInfluencer.payment_status,
+        payment_done: editingInfluencer.payment_done ?? "",
+        brand_name: editingInfluencer.brand_name,
+        created_at: editingInfluencer.created_at,
+        creator_id: editingInfluencer.creator_id,
+        approval_required: editingInfluencer.approval_required || "",
+        approval_comment: editingInfluencer.approval_comment || "",
+        approval_status: editingInfluencer.approval_status || "",
       });
     } else {
       setForm(initialFormState);
@@ -116,43 +132,43 @@ export function AddInfluencerDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const influencerData = {
+    const influencerData: Omit<Influencer, "id" | "creator_name"> = {
       name: form.name,
-      profileLink: form.profileLink,
-      followers: parseInt(form.followers) || 0,
-      typeOfInfluencer: form.typeOfInfluencer as InfluencerType,
-      email: form.email,
-      contactNumber: form.contactNumber,
-      payout: parseFloat(form.payout) || 0,
-      productAmount: parseFloat(form.productAmount) || 0,
-      totalAmount: parseFloat(form.totalAmount) || 0,
-      orderDate: form.orderDate,
-      receiveDate: form.receiveDate,
-      publishedReelDate: form.publishedReelDate,
-      reelLink: form.reelLink,
-      mail: form.mail,
-      photo: form.photo,
-      review: form.review,
-      views: parseInt(form.views) || 0,
-      likes: parseInt(form.likes) || 0,
-      comments: parseInt(form.comments) || 0,
-      paymentDate: form.paymentDate,
-      gpayNumber: form.gpayNumber,
-      paymentStatus: form.paymentStatus as PaymentStatus,
-      paymentDoneDate: form.paymentDoneDate,
-      createdBy: form.createdBy,
-      createdAt: form.createdAt,
-      brandName: form.brandName,
-      approvalRequired: form.approvalRequired,
-      approved: form.approved,
-      approvalComment: form.approvalComment,
+      profile: form.profile,
+      followers: form.followers || "0",
+      type: (form.type as InfluencerType) || "Nano (1K-10K)",
+      email: form.email || "",
+      contact: form.contact || "",
+      payout: Number(form.payout) || 0,
+      product_amount: Number(form.product_amount) || 0,
+      total_amount: Number(form.payout) + Number(form.product_amount),
+      order_date: form.order_date || "",
+      receive_date: form.receive_date || "",
+      published_date: form.published_date || "",
+      reel_link: form.reel_link || "",
+      mail_status: form.mail_status,
+      photo: form.photo || "",
+      review: form.review || "",
+      views: form.views || "0",
+      likes: form.likes || "0",
+      comments: form.comments || "0",
+      payment_date: form.payment_date || "",
+      gpay_number: form.gpay_number || "",
+      payment_status: (form.payment_status as PaymentStatus) || "Pending",
+      payment_done: form.payment_done || "",
+      creator_id: form.creator_id || "",
+      created_at: form.created_at || "",
+      brand_name: form.brand_name || "",
+      approval_required: form.approval_required || "",
+      approval_status: form.approval_status || "",
+      approval_comment: form.approval_comment || "",
     };
 
     if (isEditMode && onEdit && editingInfluencer) {
       onEdit({
         ...influencerData,
         id: editingInfluencer.id,
-        srNo: editingInfluencer.srNo,
+        creator_name: editingInfluencer.creator_name,
       });
     } else {
       onAdd(influencerData);
@@ -166,6 +182,25 @@ export function AddInfluencerDialog({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  type StepHandlerArgs = {
+    event: React.KeyboardEvent<HTMLInputElement>;
+    value: string | number;
+    step: number;
+    onChange: (nextValue: string) => void;
+  };
+
+  function handleNumberStep({ event, value, step, onChange }: StepHandlerArgs) {
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+
+    event.preventDefault();
+
+    const current =
+      value === "" || Number.isNaN(Number(value)) ? 0 : Number(value);
+
+    const next = event.key === "ArrowUp" ? current + step : current - step;
+
+    onChange(String(next));
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto bg-card border-border">
@@ -190,17 +225,19 @@ export function AddInfluencerDialog({
                   onChange={(e) => updateField("name", e.target.value)}
                   required
                   className="bg-secondary/50 border-border"
+                  placeholder="Influencer name"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="profileLink">Profile Link</Label>
+                <Label htmlFor="profile">Profile Link *</Label>
                 <Input
-                  id="profileLink"
+                  id="profile"
                   type="url"
-                  value={form.profileLink}
-                  onChange={(e) => updateField("profileLink", e.target.value)}
+                  value={form.profile}
+                  onChange={(e) => updateField("profile", e.target.value)}
                   placeholder="https://instagram.com/..."
                   className="bg-secondary/50 border-border"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -208,19 +245,28 @@ export function AddInfluencerDialog({
                 <Input
                   id="followers"
                   type="number"
-                  value={form.followers}
-                  onChange={(e) => updateField("followers", e.target.value)}
+                  value={form.followers ?? ""}
+                  onChange={(e) =>
+                    updateField("followers", e.target.value || "")
+                  }
+                  onKeyDown={(e) =>
+                    handleNumberStep({
+                      event: e,
+                      step: 100,
+                      value: form.followers || "",
+                      onChange: (v) => updateField("followers", v),
+                    })
+                  }
                   className="bg-secondary/50 border-border"
-                  step={100}
+                  placeholder="Enter followers number"
+                  formNoValidate
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="typeOfInfluencer">Type of Influencer *</Label>
+                <Label htmlFor="type">Type of Influencer *</Label>
                 <Select
-                  value={form.typeOfInfluencer}
-                  onValueChange={(value) =>
-                    updateField("typeOfInfluencer", value)
-                  }
+                  value={form.type}
+                  onValueChange={(value) => updateField("type", value)}
                   required
                 >
                   <SelectTrigger className="bg-secondary/50 border-border">
@@ -243,15 +289,17 @@ export function AddInfluencerDialog({
                   value={form.email}
                   onChange={(e) => updateField("email", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter Email Id"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="contactNumber">Contact Number</Label>
+                <Label htmlFor="contact">Contact Number</Label>
                 <Input
-                  id="contactNumber"
-                  value={form.contactNumber}
-                  onChange={(e) => updateField("contactNumber", e.target.value)}
+                  id="contact"
+                  value={form.contact}
+                  onChange={(e) => updateField("contact", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter Contact Number"
                 />
               </div>
             </div>
@@ -264,19 +312,19 @@ export function AddInfluencerDialog({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="brandName">Name Of Brand</Label>
+                <Label htmlFor="brand_name">Name Of Brand</Label>
                 <Select
-                  value={form.brandName}
-                  onValueChange={(value) => updateField("brandName", value)}
+                  value={form.brand_name}
+                  onValueChange={(value) => updateField("brand_name", value)}
                   required
                 >
                   <SelectTrigger className="bg-secondary/50 border-border">
                     <SelectValue placeholder="Select Brand" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
-                    {BrandNames.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.name}>
+                        {brand.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -297,28 +345,39 @@ export function AddInfluencerDialog({
                   id="payout"
                   type="number"
                   value={form.payout}
-                  onChange={(e) => updateField("payout", e.target.value)}
+                  onChange={(e) => {
+                    updateField("payout", e.target.value);
+                  }}
                   className="bg-secondary/50 border-border"
-                  step={100}
+                  onKeyDown={(e) =>
+                    handleNumberStep({
+                      event: e,
+                      step: 100,
+                      value: form.payout || 0,
+                      onChange: (v) => updateField("payout", v),
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="productAmount">Product Amount (₹)</Label>
+                <Label htmlFor="product_amount">Product Amount (₹)</Label>
                 <Input
-                  id="productAmount"
+                  id="product_amount"
                   type="number"
-                  value={form.productAmount}
-                  onChange={(e) => updateField("productAmount", e.target.value)}
+                  value={form.product_amount}
+                  onChange={(e) =>
+                    updateField("product_amount", e.target.value)
+                  }
                   className="bg-secondary/50 border-border"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="totalAmount">Total Amount (₹)</Label>
+                <Label htmlFor="total_amount">Total Amount (₹)</Label>
                 <Input
-                  id="totalAmount"
+                  id="total_amount"
                   type="number"
-                  value={Number(form.payout) + Number(form.productAmount)}
-                  onChange={(e) => updateField("totalAmount", e.target.value)}
+                  value={Number(form.payout) + Number(form.product_amount)}
+                  onChange={(e) => updateField("total_amount", e.target.value)}
                   className="bg-secondary/50 border-border"
                   readOnly
                 />
@@ -331,20 +390,17 @@ export function AddInfluencerDialog({
               Approval Required
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="approvalRequired">Approval Required ?</Label>
+              <div className="space-y-2 w-full">
+                <Label htmlFor="approval_required">Approval Required ?</Label>
                 <Select
-                  value={form.approvalRequired ? "YES" : "NO"}
+                  value={form.approval_required}
                   onValueChange={(value) =>
-                    updateField(
-                      "approvalRequired",
-                      value === "YES" ? true : false
-                    )
+                    updateField("approval_required", value)
                   }
                   required
                 >
-                  <SelectTrigger className="bg-secondary/50 border-border">
-                    <SelectValue placeholder="Select Approval" />
+                  <SelectTrigger className="bg-secondary/50 border-border w-full">
+                    <SelectValue placeholder="Select Approval Requirement" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     {["YES", "NO"].map((type) => (
@@ -356,34 +412,38 @@ export function AddInfluencerDialog({
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="approved">Approve</Label>
-                <Select
-                  value={form.approved}
-                  onValueChange={(value) => updateField("approved", value)}
-                  required
-                >
-                  <SelectTrigger className="bg-secondary/50 border-border">
-                    <SelectValue placeholder="Select Approval" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border-border">
-                    {["YES", "NO", "OTHER"].map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {role === "ADMIN" && (
+                <div className="space-y-2">
+                  <Label htmlFor="approval_status">Approval Status</Label>
+                  <Select
+                    value={form.approval_status}
+                    onValueChange={(value) =>
+                      updateField("approval_status", value)
+                    }
+                    required
+                  >
+                    <SelectTrigger className="bg-secondary/50 border-border w-full">
+                      <SelectValue placeholder="Select Approval Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border-border">
+                      {["YES", "NO", "OTHER"].map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
-            {form.approved === "OTHER" && (
+            {form.approval_status === "OTHER" && role === "ADMIN" && (
               <div className="space-y-2">
-                <Label htmlFor="approvalComment">Approval Comment</Label>
+                <Label htmlFor="approval_comment">Approval Comment</Label>
                 <Textarea
-                  id="approvalComment"
-                  value={form.approvalComment}
+                  id="approval_comment"
+                  value={form.approval_comment}
                   onChange={(e) =>
-                    updateField("approvalComment", e.target.value)
+                    updateField("approval_comment", e.target.value)
                   }
                   placeholder="Enter Approval Comment..."
                   className="bg-secondary/50 border-border resize-none w-full"
@@ -401,33 +461,37 @@ export function AddInfluencerDialog({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="orderDate">Order Date</Label>
+                <Label htmlFor="order_date">Order Date</Label>
                 <Input
-                  id="orderDate"
+                  id="order_date"
                   type="date"
-                  value={form.orderDate}
-                  onChange={(e) => updateField("orderDate", e.target.value)}
-                  className="bg-secondary/50 border-border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="receiveDate">Receive Date</Label>
-                <Input
-                  id="receiveDate"
-                  type="date"
-                  value={form.receiveDate}
-                  onChange={(e) => updateField("receiveDate", e.target.value)}
-                  className="bg-secondary/50 border-border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="publishedReelDate">Published Reel Date</Label>
-                <Input
-                  id="publishedReelDate"
-                  type="date"
-                  value={form.publishedReelDate}
+                  value={form.order_date || ""}
                   onChange={(e) =>
-                    updateField("publishedReelDate", e.target.value)
+                    updateField("order_date", e.target.value || "")
+                  }
+                  className="bg-secondary/50 border-border"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="receive_date">Receive Date</Label>
+                <Input
+                  id="receive_date"
+                  type="date"
+                  value={form.receive_date || ""}
+                  onChange={(e) =>
+                    updateField("receive_date", e.target.value || "")
+                  }
+                  className="bg-secondary/50 border-border"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="published_date">Published Reel Date</Label>
+                <Input
+                  id="published_date"
+                  type="date"
+                  value={form.published_date || ""}
+                  onChange={(e) =>
+                    updateField("published_date", e.target.value || "")
                   }
                   className="bg-secondary/50 border-border"
                 />
@@ -442,14 +506,14 @@ export function AddInfluencerDialog({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="mail">Mail Sent</Label>
+                <Label htmlFor="mail_status">Mail Sent</Label>
                 <Select
-                  value={form.mail}
-                  onValueChange={(value) => updateField("mail", value)}
+                  value={form.mail_status}
+                  onValueChange={(value) => updateField("mail_status", value)}
                   required
                 >
-                  <SelectTrigger className="bg-secondary/50 border-border">
-                    <SelectValue placeholder="Select Mail" />
+                  <SelectTrigger className="bg-secondary/50 border-border w-full">
+                    <SelectValue placeholder="Select Mail Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     {["Sent", "Pending"].map((type) => (
@@ -461,33 +525,43 @@ export function AddInfluencerDialog({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="reelLink">Reel Link</Label>
+                <Label htmlFor="reel_link">Reel Link</Label>
                 <Input
-                  id="reelLink"
+                  id="reel_link"
                   type="url"
-                  value={form.reelLink}
-                  onChange={(e) => updateField("reelLink", e.target.value)}
+                  value={form.reel_link}
+                  onChange={(e) => updateField("reel_link", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter Reel Link"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="photo">Photo Link</Label>
-                <Input
-                  id="photo"
-                  type="url"
+                <Label htmlFor="photo">Photo</Label>
+                <Select
                   value={form.photo}
-                  onChange={(e) => updateField("photo", e.target.value)}
-                  className="bg-secondary/50 border-border"
-                />
+                  onValueChange={(value) => updateField("photo", value)}
+                >
+                  <SelectTrigger className="bg-secondary/50 border-border w-full">
+                    <SelectValue placeholder="Select Approval" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {["YES", "NO"].map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="views">Views</Label>
                 <Input
                   id="views"
                   type="number"
-                  value={form.views}
+                  value={form.views || ""}
                   onChange={(e) => updateField("views", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter views"
                 />
               </div>
               <div className="space-y-2">
@@ -495,9 +569,10 @@ export function AddInfluencerDialog({
                 <Input
                   id="likes"
                   type="number"
-                  value={form.likes}
+                  value={form.likes || ""}
                   onChange={(e) => updateField("likes", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter likes"
                 />
               </div>
               <div className="space-y-2">
@@ -505,22 +580,30 @@ export function AddInfluencerDialog({
                 <Input
                   id="comments"
                   type="number"
-                  value={form.comments}
+                  value={form.comments || ""}
                   onChange={(e) => updateField("comments", e.target.value)}
                   className="bg-secondary/50 border-border"
+                  placeholder="Enter comments"
                 />
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="review">Review</Label>
-              <Textarea
-                id="review"
+              <Select
                 value={form.review}
-                onChange={(e) => updateField("review", e.target.value)}
-                placeholder="Enter review notes..."
-                className="bg-secondary/50 border-border resize-none"
-                rows={3}
-              />
+                onValueChange={(value) => updateField("review", value)}
+              >
+                <SelectTrigger className="bg-secondary/50 border-border ">
+                  <SelectValue placeholder="Select Approval" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  {["YES", "NO"].map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -531,30 +614,34 @@ export function AddInfluencerDialog({
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="paymentDate">Payment Date</Label>
+                <Label htmlFor="payment_date">Payment Date</Label>
                 <Input
-                  id="paymentDate"
+                  id="payment_date"
                   type="date"
-                  value={form.paymentDate}
-                  onChange={(e) => updateField("paymentDate", e.target.value)}
+                  value={form.payment_date || ""}
+                  onChange={(e) =>
+                    updateField("payment_date", e.target.value || "")
+                  }
                   className="bg-secondary/50 border-border"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="gpayNumber">GPay Number</Label>
+                <Label htmlFor="gpay_number">GPay Number</Label>
                 <Input
-                  id="gpayNumber"
+                  id="gpay_number"
                   placeholder="+91 123456789"
-                  value={form.gpayNumber}
-                  onChange={(e) => updateField("gpayNumber", e.target.value)}
+                  value={form.gpay_number}
+                  onChange={(e) => updateField("gpay_number", e.target.value)}
                   className="bg-secondary/50 border-border"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentStatus">Payment Status</Label>
+                <Label htmlFor="payment_status">Payment Status</Label>
                 <Select
-                  value={form.paymentStatus}
-                  onValueChange={(value) => updateField("paymentStatus", value)}
+                  value={form.payment_status}
+                  onValueChange={(value) =>
+                    updateField("payment_status", value)
+                  }
                 >
                   <SelectTrigger className="bg-secondary/50 border-border w-full">
                     <SelectValue placeholder="Select status" />
@@ -569,13 +656,13 @@ export function AddInfluencerDialog({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentDoneDate">Payment Done Date</Label>
+                <Label htmlFor="payment_done">Payment Done Date</Label>
                 <Input
-                  id="paymentDoneDate"
+                  id="payment_done"
                   type="date"
-                  value={form.paymentDoneDate}
+                  value={form.payment_done || ""}
                   onChange={(e) =>
-                    updateField("paymentDoneDate", e.target.value)
+                    updateField("payment_done", e.target.value || "")
                   }
                   className="bg-secondary/50 border-border"
                 />

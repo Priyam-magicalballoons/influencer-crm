@@ -1,3 +1,5 @@
+"use client";
+
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import {
   Table,
@@ -10,11 +12,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Influencer, PaymentStatus } from "@/lib/types";
+import { format, isValid, parse, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
+import { getUserData } from "@/lib/helpers";
 
 interface InfluencerTableProps {
   influencers: Influencer[];
   onEdit: (influencer: Influencer) => void;
   onDelete: (influencer: Influencer) => void;
+  role: "ADMIN" | "CREATOR";
 }
 
 function formatNumber(num: number): string {
@@ -44,6 +50,7 @@ export function InfluencerTable({
   influencers,
   onEdit,
   onDelete,
+  role,
 }: InfluencerTableProps) {
   if (influencers.length === 0) {
     return (
@@ -158,8 +165,8 @@ export function InfluencerTable({
             <TableRow
               key={influencer.id}
               className={`hover:bg-muted/50 transition-colors ${
-                influencer.approvalRequired &&
-                !influencer.approved &&
+                influencer.approval_required === "YES" &&
+                !influencer.approval_comment &&
                 "bg-red-900 hover:bg-red-900/80"
               }
               `}
@@ -169,36 +176,38 @@ export function InfluencerTable({
             >
               <TableCell
                 className={`border-border hover:bg-muted/50 transition-colors sticky left-0
-                  ${influencer.orderDate && "bg-blue-400 hover:bg-blue-500/80"}
+                  ${influencer.order_date && "bg-blue-400 hover:bg-blue-500/80"}
                   ${
-                    influencer.reelLink &&
+                    influencer.reel_link &&
                     "bg-orange-500 hover:bg-orange-500/80"
                   } ${
-                  influencer.paymentStatus === "Completed" &&
+                  influencer.payment_status === "Completed" &&
                   "bg-green-500 hover:bg-green-500/80"
                 }`}
               >
                 {/* {influencer.srNo} */}
               </TableCell>
               <TableCell className="font-medium text-foreground text-center">
-                {influencer.srNo}
+                {index + 1}
               </TableCell>
               <TableCell className="font-medium text-foreground ">
-                {influencer.createdBy}
+                {influencer.creator_name}
               </TableCell>
               <TableCell className="font-medium text-foreground ">
-                {influencer.createdAt}
+                {isValid(influencer.created_at)
+                  ? format(influencer.created_at, "do-MMM-yyyy")
+                  : ""}
               </TableCell>
               <TableCell className="font-medium text-foreground ">
-                {influencer.brandName}
+                {influencer.brand_name}
               </TableCell>
               <TableCell className="font-medium text-foreground ">
                 {influencer.name}
               </TableCell>
               <TableCell>
-                {influencer.profileLink && (
+                {influencer.profile && (
                   <a
-                    href={influencer.profileLink}
+                    href={influencer.profile}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
@@ -208,44 +217,50 @@ export function InfluencerTable({
                 )}
               </TableCell>
               <TableCell className="text-foreground">
-                {formatNumber(influencer.followers)}
+                {influencer.followers}
               </TableCell>
               <TableCell>
                 <Badge
                   variant="outline"
                   className="border-primary/30 text-primary bg-primary/10"
                 >
-                  {influencer.typeOfInfluencer}
+                  {influencer.type}
                 </Badge>
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {influencer.email}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.contactNumber}
+                {influencer.contact}
               </TableCell>
               <TableCell className="text-foreground font-medium">
-                {formatCurrency(influencer.payout)}
+                {formatCurrency(Number(influencer.payout))}
               </TableCell>
               <TableCell className="text-foreground">
-                {formatCurrency(influencer.productAmount)}
+                {formatCurrency(Number(influencer.product_amount))}
               </TableCell>
               <TableCell className="text-foreground font-semibold">
-                {formatCurrency(influencer.totalAmount)}
+                {formatCurrency(Number(influencer.total_amount))}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.orderDate}
+                {isValid(influencer.order_date)
+                  ? format(influencer.order_date!, "dd-MM-yy")
+                  : ""}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.receiveDate}
+                {isValid(influencer.receive_date)
+                  ? format(influencer.receive_date!, "dd-MM-yy")
+                  : ""}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.publishedReelDate}
+                {isValid(influencer.published_date)
+                  ? format(influencer.published_date!, "dd-MM-yy")
+                  : ""}
               </TableCell>
               <TableCell>
-                {influencer.reelLink && (
+                {influencer.reel_link && (
                   <a
-                    href={influencer.reelLink}
+                    href={influencer.reel_link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
@@ -255,7 +270,7 @@ export function InfluencerTable({
                 )}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.mail}
+                {influencer.email}
               </TableCell>
               <TableCell>
                 {influencer.photo && (
@@ -273,38 +288,42 @@ export function InfluencerTable({
                 {influencer.review}
               </TableCell>
               <TableCell className="text-foreground">
-                {formatNumber(influencer.views)}
+                {influencer.views}
               </TableCell>
               <TableCell className="text-foreground">
-                {formatNumber(influencer.likes)}
+                {influencer.likes}
               </TableCell>
               <TableCell className="text-foreground">
-                {formatNumber(influencer.comments)}
+                {influencer.comments}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.paymentDate}
+                {influencer.payment_date}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.gpayNumber}
+                {influencer.gpay_number}
               </TableCell>
               <TableCell>
                 <Badge
-                  variant={getPaymentStatusVariant(influencer.paymentStatus)}
+                  variant={getPaymentStatusVariant(
+                    influencer.payment_status || "Pending"
+                  )}
                 >
-                  {influencer.paymentStatus}
+                  {influencer.payment_status}
                 </Badge>
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.paymentDoneDate}
+                {isValid(influencer.payment_done)
+                  ? format(influencer.payment_done!, "dd-MM-yy")
+                  : ""}
               </TableCell>
               <TableCell className="text-muted-foreground text-center">
-                {influencer.approvalRequired ? "YES" : "NO"}
+                {influencer.approval_required ? "YES" : "NO"}
               </TableCell>
               <TableCell className="text-muted-foreground text-center min-w-64 whitespace-pre-wrap line-clamp-3">
-                {influencer.approved
-                  ? influencer.approved === "OTHER"
-                    ? influencer.approvalComment
-                    : influencer.approved
+                {influencer.approval_status
+                  ? influencer.approval_status === "OTHER"
+                    ? influencer.approval_comment
+                    : influencer.approval_status
                   : "-"}
               </TableCell>
               <TableCell className="sticky right-0 bg-card">
@@ -317,14 +336,16 @@ export function InfluencerTable({
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    onClick={() => onDelete(influencer)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {role === "ADMIN" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => onDelete(influencer)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
