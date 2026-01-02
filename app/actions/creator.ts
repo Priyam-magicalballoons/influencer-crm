@@ -1,28 +1,34 @@
 "use server";
 
 import { sql } from "@/db";
+import bcrypt from "bcryptjs";
 
 interface CreatorDataProps {
   name: string;
   email: string;
+  password: string;
   role: "ADMIN" | "CREATOR";
 }
 
 export const createUser = async ({
   email,
   name,
+  password,
   role = "CREATOR",
 }: CreatorDataProps) => {
   try {
+    const hashedPassword = bcrypt.hashSync(password, 12);
     const create = await sql`
     WITH inserted AS (
       INSERT INTO users (
         name,
         email,
+        password,
         role
     ) VALUES (
         ${name},
         ${email},
+        ${hashedPassword},
         ${role}
     ) ON CONFLICT (email) DO 
     NOTHING RETURNING *) 

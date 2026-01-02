@@ -31,6 +31,7 @@ interface AddCreatorProps {
 const AddCreator = ({ onOpenChange, open }: AddCreatorProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<"CREATOR" | "ADMIN">("CREATOR");
 
   const handleSubmit = async () => {
@@ -38,7 +39,7 @@ const AddCreator = ({ onOpenChange, open }: AddCreatorProps) => {
       return toast.error("Kindly fill all the fields");
     }
 
-    const response = await createUser({ name, email, role });
+    const response = await createUser({ name, email, password, role });
 
     if (response.status === 500) {
       return toast.error(response.message);
@@ -79,6 +80,17 @@ const AddCreator = ({ onOpenChange, open }: AddCreatorProps) => {
                 value={email}
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                placeholder="*******"
+                value={password}
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="grid gap-3">
