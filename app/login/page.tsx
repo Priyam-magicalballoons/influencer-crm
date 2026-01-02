@@ -15,6 +15,9 @@ import {
 import { Users, Mail, Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { authenticateUser } from "../actions/createUser";
+import { useUser } from "@/lib/store";
+import { generateJWTToken } from "@/lib/jwt";
 
 const Login = () => {
   const router = useRouter();
@@ -27,18 +30,31 @@ const Login = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  const { setUser, user } = useUser();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    // Simulate login - replace with actual auth logic when backend is connected
-    setTimeout(() => {
+    try {
+      if (!loginEmail.trim() || !loginPassword.trim()) {
+        return toast.error("kindly fill all fields");
+      }
+      const user: any = await authenticateUser(loginEmail, loginPassword);
+      if (user.status === 200) {
+        toast.success(user.message, {
+          description: "You have successfully logged in.",
+        });
+        setUser({ name: user.data.name, email: user.data.email });
+        await generateJWTToken(`${user.data.id}_${user.data.role}`);
+        router.push("/");
+      } else {
+        toast.error(user.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setIsLoading(false);
-      toast.success("Welcome back!", {
-        description: "You have successfully logged in.",
-      });
-      router.push("/");
-    }, 1000);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
