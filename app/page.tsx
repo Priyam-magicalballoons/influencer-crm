@@ -219,8 +219,12 @@ const page = () => {
       Payout: inf.payout,
       "Product Amount": inf.product_amount,
       "Total Amount": inf.total_amount,
-      "Order Date": inf.order_date,
-      "Receive Date": inf.receive_date,
+      "Order Date": isValid(inf.order_date)
+        ? format(inf.order_date, "do-MMM-yyyy")
+        : "",
+      "Receive Date": isValid(inf.receive_date)
+        ? format(inf.receive_date, "do-MMM-yyyy")
+        : "",
       "Published Reel Date": inf.published_date,
       "Reel Link": inf.reel_link,
       Mail: inf.email,
@@ -229,10 +233,14 @@ const page = () => {
       Views: inf.views,
       Likes: inf.likes,
       Comments: inf.comments,
-      "Payment Date": inf.payment_date,
+      "Payment Date": inf.isValid(inf.payment_date)
+        ? format(inf.payment_date, "do-MMM-yyyy")
+        : "",
       "Gpay Number": inf.gpay_number,
       "Payment Status": inf.payment_status,
-      "Payment Done Date": inf.payment_done,
+      "Payment Done Date": inf.isValid(inf.payment_done)
+        ? format(inf.payment_done, "do-MMM-yyyy")
+        : "",
       "Approval Required": inf.approval_required,
       "Approval Status": inf.approval_status
         ? inf.approval_status === "OTHER"
