@@ -2,48 +2,57 @@ export type InfluencerType =
   | "Nano (1K-10K)"
   | "Micro (10K-50K)"
   | "Macro (500K-1M)"
-  | "Celebrity";
+  | "Celebrity (1M+)";
 
 export type PaymentStatus = "Pending" | "Completed";
 
-export type BrandNames = "CIPLA" | "AJANTA" | "SUNPHARMA" | "MANKIND";
+export type BrandNames =
+  | "CIPLA"
+  | "AJANTA"
+  | "SUNPHARMA"
+  | "MANKIND"
+  | "ALL Brands";
 
 export interface Influencer {
-  id: string;
-  createdBy: string;
-  createdAt: string;
-  brandName: string;
-  srNo: number;
+  id?: string;
+  creator_id: string;
+  creator_name?: string;
+  created_at: string;
+  brand_name: string;
+  // srNo: number;
   name: string;
-  profileLink: string;
-  followers: number;
-  typeOfInfluencer: InfluencerType;
-  email: string;
-  contactNumber: string;
-  payout: number;
-  productAmount: number;
-  totalAmount: number;
-  orderDate: string;
-  receiveDate: string;
-  publishedReelDate: string;
-  reelLink: string;
-  mail: string;
-  photo: string;
-  review: string;
-  views: number;
-  likes: number;
-  comments: number;
-  paymentDate: string;
-  gpayNumber: string;
-  paymentStatus: PaymentStatus;
-  paymentDoneDate: string;
+  profile: string;
+  followers: string;
+  type: InfluencerType;
+  email?: string;
+  contact?: string;
+  payout?: number;
+  product_amount?: number;
+  total_amount?: number;
+  order_date?: string | null;
+  receive_date?: string | null;
+  published_date?: string | null;
+  reel_link?: string;
+  mail_status?: string;
+  photo?: string;
+  review?: string;
+  views?: string;
+  likes?: string;
+  comments?: string;
+  payment_date?: string | null;
+  gpay_number?: string;
+  payment_status?: PaymentStatus;
+  payment_done?: string | null;
+  approval_required?: string;
+  approval_status?: string;
+  approval_comment?: string;
 }
 
 export const influencerTypes: InfluencerType[] = [
   "Nano (1K-10K)",
   "Micro (10K-50K)",
   "Macro (500K-1M)",
-  "Celebrity",
+  "Celebrity (1M+)",
 ];
 
 export const paymentStatuses: PaymentStatus[] = ["Pending", "Completed"];
@@ -53,4 +62,5 @@ export const BrandNames: BrandNames[] = [
   "CIPLA",
   "MANKIND",
   "SUNPHARMA",
+  "ALL Brands",
 ];
