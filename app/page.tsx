@@ -170,7 +170,6 @@ const page = () => {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      console.log(query);
       filtered = filtered.filter(
         (influencer) =>
           influencer.name.toLowerCase().includes(query) ||
@@ -181,7 +180,6 @@ const page = () => {
 
     if (selectedCreator !== "0") {
       filtered = filtered.filter((influencer) => {
-        console.log(influencer.creator_id, selectedCreator);
         return influencer.creator_id === selectedCreator;
       });
     }
@@ -267,11 +265,9 @@ const page = () => {
       ...newInfluencer,
       creator_name: user.name,
     };
-
     const add = await createInfluencer(influencer);
-    console.log(add);
 
-    setInfluencers((prev) => [...prev, influencer]);
+    setInfluencers((prev) => [...prev, add]);
     toast("Influencer Added", {
       description: `${newInfluencer.name} has been added to the CRM.`,
     });
@@ -309,8 +305,6 @@ const page = () => {
 
   const handleDeleteInfluencer = async () => {
     if (!deleteInfluencer) return;
-
-    console.log(deleteInfluencer);
 
     setInfluencers((prev) => {
       const filtered = prev.filter((inf) => inf.id !== deleteInfluencer.id);
@@ -353,21 +347,21 @@ const page = () => {
     getInfluencers();
   }, []);
 
-  const testRedis = async () => {
-    const brands = await getALlBrands();
-    const data = await setDataIntoRedis("brands", brands);
-    console.log(data);
-  };
+  // const testRedis = async () => {
+  //   const brands = await getALlBrands();
+  //   const data = await setDataIntoRedis("brands", brands);
+  //   console.log(data);
+  // };
 
-  const testGetRedisData = async () => {
-    const data = await getDataFromRedis("creators");
-    console.log(data);
-  };
+  // const testGetRedisData = async () => {
+  //   const data = await getDataFromRedis("creators");
+  //   console.log(data);
+  // };
 
-  useEffect(() => {
-    // testRedis();
-    // testGetRedisData();
-  }, []);
+  // useEffect(() => {
+  //   testRedis();
+  //   testGetRedisData();
+  // }, []);
 
   return (
     <div className="min-h-screen bg-background dark">

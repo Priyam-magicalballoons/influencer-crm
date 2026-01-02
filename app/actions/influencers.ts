@@ -5,7 +5,6 @@ import { getUserData } from "@/lib/helpers";
 import { Influencer, InfluencerType } from "@/lib/types";
 
 export const createInfluencer = async (influencerData: Influencer) => {
-  console.log(influencerData);
   const userId = await getUserData();
   try {
     const create = await sql`INSERT INTO influencers (
@@ -66,11 +65,10 @@ export const createInfluencer = async (influencerData: Influencer) => {
           ${influencerData.approval_comment},
           ${userId.user?.userId},
           ${influencerData.creator_name}
-          )`;
+          ) RETURNING *`;
 
-    console.log(create);
+    return create[0];
   } catch (error) {
-    console.log(error);
     return {
       status: 500,
       data: "Internal server Error",
@@ -119,6 +117,7 @@ export const updateInfluencer = async (influencerData: Influencer) => {
 
 export const deleteInfluencerData = async (influencerId: string) => {
   try {
+    console.log(influencerId);
     if (!influencerId) {
       return {
         status: 500,
