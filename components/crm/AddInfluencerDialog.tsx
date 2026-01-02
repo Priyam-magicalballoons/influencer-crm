@@ -28,6 +28,7 @@ import {
 } from "@/lib/types";
 import { getDataFromRedis } from "@/redis";
 import { getUserData } from "@/lib/helpers";
+import { toast } from "sonner";
 // import { handleNumberStep } from "@/lib/helpers";
 
 interface AddInfluencerDialogProps {
@@ -131,6 +132,9 @@ export function AddInfluencerDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.name || !form.profile || !form.type || !form.brand_name) {
+      return toast.error("Name, Profile, Type, Brand name is required");
+    }
 
     const influencerData: Omit<Influencer, "id" | "creator_name"> = {
       name: form.name,
@@ -197,7 +201,12 @@ export function AddInfluencerDialog({
     const current =
       value === "" || Number.isNaN(Number(value)) ? 0 : Number(value);
 
-    const next = event.key === "ArrowUp" ? current + step : current - step;
+    const next =
+      event.key === "ArrowUp"
+        ? current + step
+        : current - step < 0
+        ? current
+        : current - step;
 
     onChange(String(next));
   }
@@ -244,19 +253,18 @@ export function AddInfluencerDialog({
                 <Label htmlFor="followers">Followers</Label>
                 <Input
                   id="followers"
-                  type="number"
                   value={form.followers ?? ""}
                   onChange={(e) =>
                     updateField("followers", e.target.value || "")
                   }
-                  onKeyDown={(e) =>
-                    handleNumberStep({
-                      event: e,
-                      step: 100,
-                      value: form.followers || "",
-                      onChange: (v) => updateField("followers", v),
-                    })
-                  }
+                  // onKeyDown={(e) =>
+                  //   handleNumberStep({
+                  //     event: e,
+                  //     step: 100,
+                  //     value: form.followers || "",
+                  //     onChange: (v) => updateField("followers", v),
+                  //   })
+                  // }
                   className="bg-secondary/50 border-border"
                   placeholder="Enter followers number"
                   formNoValidate
@@ -349,14 +357,9 @@ export function AddInfluencerDialog({
                     updateField("payout", e.target.value);
                   }}
                   className="bg-secondary/50 border-border"
-                  onKeyDown={(e) =>
-                    handleNumberStep({
-                      event: e,
-                      step: 100,
-                      value: form.payout || 0,
-                      onChange: (v) => updateField("payout", v),
-                    })
-                  }
+                  step={100}
+                  min={0}
+                  onInvalid={(e) => e.preventDefault()}
                 />
               </div>
               <div className="space-y-2">
@@ -557,7 +560,6 @@ export function AddInfluencerDialog({
                 <Label htmlFor="views">Views</Label>
                 <Input
                   id="views"
-                  type="number"
                   value={form.views || ""}
                   onChange={(e) => updateField("views", e.target.value)}
                   className="bg-secondary/50 border-border"
@@ -594,7 +596,7 @@ export function AddInfluencerDialog({
                 onValueChange={(value) => updateField("review", value)}
               >
                 <SelectTrigger className="bg-secondary/50 border-border ">
-                  <SelectValue placeholder="Select Approval" />
+                  <SelectValue placeholder="Select Review" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
                   {["YES", "NO"].map((type) => (
@@ -679,7 +681,7 @@ export function AddInfluencerDialog({
             >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" onClick={handleSubmit}>
               {isEditMode ? "Save Changes" : "Add Influencer"}
             </Button>
           </div>

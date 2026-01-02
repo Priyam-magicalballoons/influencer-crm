@@ -20,7 +20,7 @@ import {
 import { getDataFromRedis, setDataIntoRedis } from "@/redis/index";
 import { getALlBrands } from "./actions/brand";
 import { getAllUsers } from "./actions/creator";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import AddBrand from "@/components/crm/AddBrand";
 import AddCreator from "@/components/crm/AddCreator";
 
@@ -170,11 +170,12 @@ const page = () => {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
+      console.log(query);
       filtered = filtered.filter(
         (influencer) =>
           influencer.name.toLowerCase().includes(query) ||
-          influencer.email!.toLowerCase().includes(query) ||
-          influencer.typeOfInfluencer.toLowerCase().includes(query)
+          (influencer.email && influencer.email!.toLowerCase().includes(query))
+        //  || influencer.type.toLowerCase().includes(query)
       );
     }
 
@@ -202,31 +203,42 @@ const page = () => {
   ]);
 
   const handleExportExcel = useCallback(() => {
-    const exportData = filteredInfluencers.map((inf) => ({
-      // "Sr.No.": inf.srNo,
+    const exportData = filteredInfluencers.map((inf, index) => ({
+      "Sr.No.": index + 1,
+      createdBy: inf.creator_name,
+      createdAt: isValid(inf.created_at)
+        ? format(inf.created_at, "do-MMM-yyyy")
+        : "",
+      Brand: inf.brand_name,
       Name: inf.name,
-      "Profile Link": inf.profileLink,
+      "Profile Link": inf.profile_link,
       Followers: inf.followers,
-      "Type Of Influencer": inf.typeOfInfluencer,
+      "Type Of Influencer": inf.type,
       Email: inf.email,
-      "Contact Number": inf.contactNumber,
+      "Contact Number": inf.contact,
       Payout: inf.payout,
-      "Product Amount": inf.productAmount,
-      "Total Amount": inf.totalAmount,
-      "Order Date": inf.orderDate,
-      "Receive Date": inf.receiveDate,
-      "Published Reel Date": inf.publishedReelDate,
-      "Reel Link": inf.reelLink,
-      Mail: inf.mail,
+      "Product Amount": inf.product_amount,
+      "Total Amount": inf.total_amount,
+      "Order Date": inf.order_date,
+      "Receive Date": inf.receive_date,
+      "Published Reel Date": inf.published_date,
+      "Reel Link": inf.reel_link,
+      Mail: inf.email,
       Photo: inf.photo,
       Review: inf.review,
       Views: inf.views,
       Likes: inf.likes,
       Comments: inf.comments,
-      "Payment Date": inf.paymentDate,
-      "Gpay Number": inf.gpayNumber,
-      "Payment Status": inf.paymentStatus,
-      "Payment Done Date": inf.paymentDoneDate,
+      "Payment Date": inf.payment_date,
+      "Gpay Number": inf.gpay_number,
+      "Payment Status": inf.payment_status,
+      "Payment Done Date": inf.payment_done,
+      "Approval Required": inf.approval_required,
+      "Approval Status": inf.approval_status
+        ? inf.approval_status === "OTHER"
+          ? inf.approval_comment
+          : inf.approval_status
+        : "-",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);

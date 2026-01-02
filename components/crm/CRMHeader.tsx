@@ -190,10 +190,10 @@ export function CRMHeader({
             </SelectContent>
           </Select> */}
 
-          {/* <Button variant="outline" onClick={onExport} className="gap-2">
+          <Button variant="outline" onClick={onExport} className="gap-2">
             <Download className="h-4 w-4 text-neutral-400" />
             <span className="text-neutral-400 font-normal">Export Excel</span>
-          </Button> */}
+          </Button>
 
           {role === "ADMIN" && (
             <>

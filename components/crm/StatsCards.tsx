@@ -58,15 +58,15 @@ export function StatsCards({ influencers }: StatsCardsProps) {
       title: "Reels Published",
       value: formatNumber(reelsPublished),
       icon: InstagramIcon,
-      color: "text-[#14A44D]",
-      bgColor: "bg-[#14A44D]/10",
+      color: "text-[#E4A11B]",
+      bgColor: "bg-[#E4A11B]/10",
     },
     {
       title: "Payments Done",
       value: `${completedPayments}/${totalInfluencers}`,
       icon: TrendingUp,
-      color: "text-[#E4A11B]",
-      bgColor: "bg-[#E4A11B]/10",
+      color: "text-[#14A44D]",
+      bgColor: "bg-[#14A44D]/10",
     },
   ];
 
