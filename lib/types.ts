@@ -44,6 +44,7 @@ export interface Influencer {
   payment_status?: PaymentStatus;
   payment_done?: string | null;
   approval_required?: string;
+  ask_price?: number | null;
   approval_status?: string;
   approval_comment?: string;
 }

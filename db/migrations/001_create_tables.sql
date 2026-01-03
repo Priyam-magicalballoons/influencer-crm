@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS influencers(
     payment_status PAYMENT_STATUS,
     payment_done DATE,
     approval_required YN,
+    ask_price int,
     approval_status APPROVAL_STATUS,
     approval_comment VARCHAR(2000),
     created_at TIMESTAMP DEFAULT now(),

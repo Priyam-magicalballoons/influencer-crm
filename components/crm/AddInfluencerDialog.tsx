@@ -68,6 +68,7 @@ const initialFormState = {
   created_at: "",
   brand_name: "",
   approval_required: "",
+  ask_price: null,
   approval_status: "",
   approval_comment: "",
 } as Influencer;
@@ -122,6 +123,7 @@ export function AddInfluencerDialog({
         created_at: editingInfluencer.created_at,
         creator_id: editingInfluencer.creator_id,
         approval_required: editingInfluencer.approval_required || "",
+        ask_price: editingInfluencer.ask_price || null,
         approval_comment: editingInfluencer.approval_comment || "",
         approval_status: editingInfluencer.approval_status || "",
       });
@@ -414,6 +416,18 @@ export function AddInfluencerDialog({
                   </SelectContent>
                 </Select>
               </div>
+              {form.approval_required === "YES" && (
+                <div className="space-y-2">
+                  <Label htmlFor="ask_price">Ask Price (₹)</Label>
+                  <Input
+                    id="ask_price"
+                    type="number"
+                    value={Number(form.ask_price)}
+                    onChange={(e) => updateField("ask_price", e.target.value)}
+                    className="bg-secondary/50 border-border"
+                  />
+                </div>
+              )}
 
               {role === "ADMIN" && (
                 <div className="space-y-2">
