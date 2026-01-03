@@ -173,8 +173,10 @@ const page = () => {
       filtered = filtered.filter(
         (influencer) =>
           influencer.name.toLowerCase().includes(query) ||
-          (influencer.email && influencer.email!.toLowerCase().includes(query))
-        //  || influencer.type.toLowerCase().includes(query)
+          (influencer.email &&
+            influencer.email!.toLowerCase().includes(query)) ||
+          (influencer.profile &&
+            influencer.profile.toLowerCase().includes(query))
       );
     }
 

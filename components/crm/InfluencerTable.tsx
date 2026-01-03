@@ -119,7 +119,7 @@ export function InfluencerTable({
             <TableHead className="min-w-25 text-muted-foreground font-medium">
               Reel Link
             </TableHead>
-            <TableHead className="min-w-25 text-muted-foreground font-medium">
+            <TableHead className="min-w-25 text-muted-foreground font-medium text-center">
               Mail
             </TableHead>
             <TableHead className="min-w-20 text-muted-foreground font-medium">
@@ -151,6 +151,9 @@ export function InfluencerTable({
             </TableHead>
             <TableHead className="min-w-30 text-muted-foreground font-medium">
               Approval Required
+            </TableHead>
+            <TableHead className="min-w-30 text-muted-foreground font-medium text-center">
+              Ask Price
             </TableHead>
             <TableHead className="min-w-30 text-muted-foreground font-medium text-center">
               Approval Status
@@ -213,6 +216,7 @@ export function InfluencerTable({
                     className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
                   >
                     View <ExternalLink className="h-3 w-3" />
+                    <p className="text-[0px]">{influencer.profile}</p>
                   </a>
                 )}
               </TableCell>
@@ -287,13 +291,13 @@ export function InfluencerTable({
               <TableCell className="text-muted-foreground max-w-37.5 truncate">
                 {influencer.review}
               </TableCell>
-              <TableCell className="text-foreground">
+              <TableCell className="text-foreground text-center">
                 {influencer.views}
               </TableCell>
-              <TableCell className="text-foreground">
+              <TableCell className="text-foreground text-center">
                 {influencer.likes}
               </TableCell>
-              <TableCell className="text-foreground">
+              <TableCell className="text-foreground text-center">
                 {influencer.comments}
               </TableCell>
               <TableCell className="text-muted-foreground">
@@ -318,6 +322,9 @@ export function InfluencerTable({
               </TableCell>
               <TableCell className="text-muted-foreground text-center">
                 {influencer.approval_required === "YES" ? "YES" : "NO"}
+              </TableCell>
+              <TableCell className="text-muted-foreground text-center">
+                {influencer.ask_price}
               </TableCell>
               <TableCell className="text-muted-foreground text-center min-w-64 whitespace-pre-wrap line-clamp-3">
                 {influencer.approval_status
