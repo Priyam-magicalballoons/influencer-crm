@@ -166,6 +166,7 @@ export function AddInfluencerDialog({
       created_at: form.created_at || "",
       brand_name: form.brand_name || "",
       approval_required: form.approval_required || "",
+      ask_price: form.ask_price || null,
       approval_status: form.approval_status || "",
       approval_comment: form.approval_comment || "",
     };
@@ -422,9 +423,10 @@ export function AddInfluencerDialog({
                   <Input
                     id="ask_price"
                     type="number"
-                    value={Number(form.ask_price)}
+                    value={form.ask_price!}
                     onChange={(e) => updateField("ask_price", e.target.value)}
                     className="bg-secondary/50 border-border"
+                    min={0}
                   />
                 </div>
               )}

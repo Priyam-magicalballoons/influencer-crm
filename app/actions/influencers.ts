@@ -103,6 +103,7 @@ export const updateInfluencer = async (influencerData: Influencer) => {
         payment_status = ${influencerData.payment_status},
         payment_done = ${influencerData.payment_done || null},
         approval_required = ${influencerData.approval_required},
+        ask_price = ${influencerData.ask_price},
         approval_status = ${influencerData.approval_status},
         approval_comment = ${influencerData.approval_comment}
          WHERE id=${influencerId}`;

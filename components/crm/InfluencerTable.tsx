@@ -60,6 +60,8 @@ export function InfluencerTable({
     );
   }
 
+  // console.log(influencers);
+
   return (
     <div className="overflow-x-auto scrollbar-thin">
       <Table>
