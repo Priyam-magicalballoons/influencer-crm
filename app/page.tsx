@@ -251,7 +251,6 @@ const page = () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Influencers");
 
-    // Generate filename with current date
     const date = new Date().toISOString().split("T")[0];
     XLSX.writeFile(workbook, `influencers_${date}.xlsx`);
 

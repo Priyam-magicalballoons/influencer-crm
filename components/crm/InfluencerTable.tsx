@@ -317,7 +317,7 @@ export function InfluencerTable({
                   : ""}
               </TableCell>
               <TableCell className="text-muted-foreground text-center">
-                {influencer.approval_required ? "YES" : "NO"}
+                {influencer.approval_required === "YES" ? "YES" : "NO"}
               </TableCell>
               <TableCell className="text-muted-foreground text-center min-w-64 whitespace-pre-wrap line-clamp-3">
                 {influencer.approval_status
