@@ -1,8 +1,19 @@
 "use server";
 
 import { sql } from "@/db";
+import { verifySession } from "@/lib/tokens";
 
 export const createBrand = async (brandName: string) => {
+  const sessionData = (await verifySession()) as any;
+  if (sessionData.status === 400 || sessionData.status === 401) {
+    return sessionData;
+  }
+  if (sessionData.user.role !== "ADMIN") {
+    return {
+      status: 403,
+      message: "Only Admin can create brands",
+    };
+  }
   try {
     const create = await sql`
    WITH inserted AS (
@@ -45,6 +56,16 @@ export const getALlBrands = async () => {
 };
 
 export const deleteBrand = async (id: string) => {
+  const sessionData = (await verifySession()) as any;
+  if (sessionData.status === 400 || sessionData.status === 401) {
+    return sessionData;
+  }
+  if (sessionData.user.role !== "ADMIN") {
+    return {
+      status: 403,
+      message: "Only Admin can delete brands",
+    };
+  }
   try {
     const deleteBrand = sql`WITH deleted AS (DELETE FROM brand WHERE id=${id} RETURNING *) SELECT * FROM brand`;
     return {
