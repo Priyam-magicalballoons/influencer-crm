@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@/db";
+import { verifySession } from "@/lib/tokens";
 import bcrypt from "bcryptjs";
 
 interface CreatorDataProps {
@@ -17,6 +18,16 @@ export const createUser = async ({
   role = "CREATOR",
 }: CreatorDataProps) => {
   try {
+    const sessionData = (await verifySession()) as any;
+    if (sessionData.status === 400 || sessionData.status === 401) {
+      return sessionData;
+    }
+    if (sessionData.user.role !== "ADMIN") {
+      return {
+        status: 403,
+        message: "Only Admin can create users",
+      };
+    }
     const hashedPassword = bcrypt.hashSync(password, 12);
     const create = await sql`
     WITH inserted AS (
