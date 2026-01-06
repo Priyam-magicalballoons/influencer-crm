@@ -15,9 +15,7 @@ import {
 import { Users, Mail, Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { authenticateUser } from "../actions/createUser";
-import { useUser } from "@/lib/store";
-import { generateJWTToken } from "@/lib/jwt";
+import { authenticateUser } from "../actions/auth";
 
 const Login = () => {
   const router = useRouter();
@@ -25,12 +23,6 @@ const Login = () => {
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-
-  const { setUser, user } = useUser();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +32,11 @@ const Login = () => {
         return toast.error("kindly fill all fields");
       }
       const user: any = await authenticateUser(loginEmail, loginPassword);
+
       if (user.status === 200) {
         toast.success(user.message, {
           description: "You have successfully logged in.",
         });
-        setUser({ name: user.data.name, email: user.data.email });
-        await generateJWTToken(`${user.data.id}_${user.data.role}`);
         router.push("/");
       } else {
         toast.error(user.message);
