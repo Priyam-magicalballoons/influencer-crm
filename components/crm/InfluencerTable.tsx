@@ -12,9 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Influencer, PaymentStatus } from "@/lib/types";
-import { format, isValid, parse, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
-import { getUserData } from "@/lib/helpers";
+import { format, isValid } from "date-fns";
 
 interface InfluencerTableProps {
   influencers: Influencer[];
@@ -189,9 +187,7 @@ export function InfluencerTable({
                   influencer.payment_status === "Completed" &&
                   "bg-green-500 hover:bg-green-500/80"
                 }`}
-              >
-                {/* {influencer.srNo} */}
-              </TableCell>
+              ></TableCell>
               <TableCell className="font-medium text-foreground text-center">
                 {index + 1}
               </TableCell>
@@ -303,7 +299,9 @@ export function InfluencerTable({
                 {influencer.comments}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {influencer.payment_date}
+                {isValid(influencer.payment_date)
+                  ? format(influencer.payment_date!, "dd-MM-yy")
+                  : ""}
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {influencer.gpay_number}
