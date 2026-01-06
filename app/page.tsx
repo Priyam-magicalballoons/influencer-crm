@@ -9,17 +9,13 @@ import { DeleteConfirmDialog } from "@/components/crm/DeleteConfirmDialog";
 import { Influencer } from "@/lib/types";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
-import { useUser } from "@/lib/store";
-import { getRole } from "@/lib/helpers";
+import { getRole, logoutUser } from "@/lib/helpers";
 import {
   createInfluencer,
   deleteInfluencerData,
-  getInfluencersByUserId,
+  getAllInfluencers,
   updateInfluencer,
 } from "./actions/influencers";
-import { getDataFromRedis, setDataIntoRedis } from "@/redis/index";
-import { getALlBrands } from "./actions/brand";
-import { getAllUsers } from "./actions/creator";
 import { format, isValid } from "date-fns";
 import AddBrand from "@/components/crm/AddBrand";
 import AddCreator from "@/components/crm/AddCreator";
@@ -140,7 +136,6 @@ const page = () => {
     null
   );
   const [role, setRole] = useState<"ADMIN" | "CREATOR">("CREATOR");
-  const { user } = useUser();
 
   useEffect(() => {
     const getUserRole = async () => {
@@ -242,6 +237,7 @@ const page = () => {
         ? format(inf.payment_done, "do-MMM-yyyy")
         : "",
       "Approval Required": inf.approval_required,
+      "Ask Price": inf.ask_price,
       "Approval Status": inf.approval_status
         ? inf.approval_status === "OTHER"
           ? inf.approval_comment
@@ -264,7 +260,6 @@ const page = () => {
   const handleAddInfluencer = async (newInfluencer: Omit<Influencer, "id">) => {
     const influencer: Influencer = {
       ...newInfluencer,
-      creator_name: user.name,
     };
     const add = await createInfluencer(influencer);
 
@@ -340,9 +335,15 @@ const page = () => {
   };
 
   const getInfluencers = async () => {
-    const influencers = await getInfluencersByUserId();
-    // console.log(influencers.data);
-    setInfluencers(influencers.data as any);
+    const influencers = (await getAllInfluencers()) as any;
+    if (influencers.status === 400) {
+      return toast.error(influencers.message);
+    }
+    if (influencers.status === 401) {
+      toast.error(influencers.message);
+      await logoutUser();
+    }
+    setInfluencers(influencers.data);
   };
   useEffect(() => {
     getInfluencers();
