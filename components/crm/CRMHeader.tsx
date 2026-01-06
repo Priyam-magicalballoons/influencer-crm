@@ -19,9 +19,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { getDataFromRedis } from "@/redis";
-import { useRouter } from "next/navigation";
-import { getUserData, logoutUser } from "@/lib/helpers";
-import { useUser } from "@/lib/store";
+import { logoutUser } from "@/lib/helpers";
 
 const months = [
   { value: "all", label: "All Months" },
@@ -87,7 +85,6 @@ export function CRMHeader({
 }: CRMHeaderProps) {
   const [creators, setCreators] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
-  const router = useRouter();
 
   const getCreators = async () => {
     const data = await getDataFromRedis("creators");
