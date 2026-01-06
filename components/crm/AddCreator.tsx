@@ -22,6 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { createUser } from "@/app/actions/creator";
 import { setDataIntoRedis } from "@/redis";
+import { logoutUser } from "@/lib/helpers";
 
 interface AddCreatorProps {
   open: boolean;
@@ -41,8 +42,17 @@ const AddCreator = ({ onOpenChange, open }: AddCreatorProps) => {
 
     const response = await createUser({ name, email, password, role });
 
-    if (response.status === 500) {
+    if (
+      response.status === 500 ||
+      response.status === 400 ||
+      response.status === 403
+    ) {
       return toast.error(response.message);
+    }
+
+    if (response.status === 401) {
+      toast.error(response.message);
+      await logoutUser();
     }
 
     const addToRedis = await setDataIntoRedis("creators", response.data);
