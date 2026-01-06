@@ -27,7 +27,6 @@ import {
   BrandNames,
 } from "@/lib/types";
 import { getDataFromRedis } from "@/redis";
-import { getUserData } from "@/lib/helpers";
 import { toast } from "sonner";
 // import { handleNumberStep } from "@/lib/helpers";
 
