@@ -1,13 +1,21 @@
 "use server";
 
 import { sql } from "@/db/index";
-import { getUserData } from "@/lib/helpers";
 import { Influencer, InfluencerType } from "@/lib/types";
+import { requireAuth } from "./auth";
+import { verifyJWT } from "@/lib/jwt";
+import { verifySession } from "@/lib/tokens";
 
 export const createInfluencer = async (influencerData: Influencer) => {
-  const userId = await getUserData();
+  const sessionData = (await verifySession()) as any;
+  if (sessionData.status === 400 || sessionData.status === 401) {
+    return sessionData;
+  }
   try {
-    const create = await sql`INSERT INTO influencers (
+    const create = await sql`
+    WITH user_data AS (
+      SELECT id, name FROM users WHERE id=${sessionData.user.userId}
+    ) INSERT INTO influencers (
         name,
         profile,
         brand_name,
@@ -36,7 +44,7 @@ export const createInfluencer = async (influencerData: Influencer) => {
         approval_comment,
         creator_id,
         creator_name
-        ) values (
+        ) SELECT 
           ${influencerData.name},
           ${influencerData.profile},
           ${influencerData.brand_name},
@@ -63,9 +71,9 @@ export const createInfluencer = async (influencerData: Influencer) => {
           ${influencerData.approval_required},
           ${influencerData.approval_status},
           ${influencerData.approval_comment},
-          ${userId.user?.userId},
-          ${influencerData.creator_name}
-          ) RETURNING *`;
+          id,
+          name
+          FROM user_data RETURNING *`;
 
     return create[0];
   } catch (error) {
@@ -76,6 +84,7 @@ export const createInfluencer = async (influencerData: Influencer) => {
   }
 };
 export const updateInfluencer = async (influencerData: Influencer) => {
+  const sessionData = await verifySession();
   const influencerId = influencerData.id;
   try {
     const update = await sql`UPDATE influencers SET
@@ -117,8 +126,8 @@ export const updateInfluencer = async (influencerData: Influencer) => {
 };
 
 export const deleteInfluencerData = async (influencerId: string) => {
+  const sessionData = await verifySession();
   try {
-    console.log(influencerId);
     if (!influencerId) {
       return {
         status: 500,
@@ -134,14 +143,15 @@ export const deleteInfluencerData = async (influencerId: string) => {
   }
 };
 
-export const getInfluencersByUserId = async () => {
-  const user = await getUserData();
+export const getAllInfluencers = async () => {
+  const data = await verifySession();
 
-  if (user.status === 400) {
-    return {
-      status: 400,
-      data: "Token not available",
-    };
+  if (data.status === 400) {
+    return data;
+  }
+
+  if (data.status === 401) {
+    return data;
   }
 
   const influencers = await sql`SELECT * FROM influencers ORDER BY created_at`;
