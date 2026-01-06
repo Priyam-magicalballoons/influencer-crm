@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logoutUser } from "@/lib/helpers";
 import { setDataIntoRedis } from "@/redis";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -27,12 +28,21 @@ const AddBrand = ({ onOpenChange, open }: AddBrandProps) => {
     if (!brandName.trim()) {
       return toast.error("Brand name cannot be empty");
     }
-    const addToDb = await createBrand(brandName.toUpperCase());
-    if (addToDb?.status === 500) {
-      return toast.error(addToDb.message);
+    const response = await createBrand(brandName.toUpperCase());
+    if (
+      response.status === 500 ||
+      response.status === 400 ||
+      response.status === 403
+    ) {
+      return toast.error(response.message);
     }
 
-    const addToRedis = await setDataIntoRedis("brand", addToDb.data);
+    if (response.status === 401) {
+      toast.error(response.message);
+      await logoutUser();
+    }
+
+    const addToRedis = await setDataIntoRedis("brand", response.data);
 
     if (addToRedis === "OK") {
       toast.success("Brand Created Successfully");
