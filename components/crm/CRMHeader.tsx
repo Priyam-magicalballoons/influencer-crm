@@ -20,31 +20,32 @@ import {
 import { useEffect, useState } from "react";
 import { getDataFromRedis } from "@/redis";
 import { logoutUser } from "@/lib/helpers";
+import OptionsSheet from "./OptionsSheet";
 
-const months = [
-  { value: "all", label: "All Months" },
-  { value: "01", label: "January" },
-  { value: "02", label: "February" },
-  { value: "03", label: "March" },
-  { value: "04", label: "April" },
-  { value: "05", label: "May" },
-  { value: "06", label: "June" },
-  { value: "07", label: "July" },
-  { value: "08", label: "August" },
-  { value: "09", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
-];
+// const months = [
+//   { value: "all", label: "All Months" },
+//   { value: "01", label: "January" },
+//   { value: "02", label: "February" },
+//   { value: "03", label: "March" },
+//   { value: "04", label: "April" },
+//   { value: "05", label: "May" },
+//   { value: "06", label: "June" },
+//   { value: "07", label: "July" },
+//   { value: "08", label: "August" },
+//   { value: "09", label: "September" },
+//   { value: "10", label: "October" },
+//   { value: "11", label: "November" },
+//   { value: "12", label: "December" },
+// ];
 
-const currentYear = new Date().getFullYear();
-const years = [
-  { value: "all", label: "All Years" },
-  ...Array.from({ length: 10 }, (_, i) => ({
-    value: (currentYear - i).toString(),
-    label: (currentYear - i).toString(),
-  })),
-];
+// const currentYear = new Date().getFullYear();
+// const years = [
+//   { value: "all", label: "All Years" },
+//   ...Array.from({ length: 10 }, (_, i) => ({
+//     value: (currentYear - i).toString(),
+//     label: (currentYear - i).toString(),
+//   })),
+// ];
 
 interface CRMHeaderProps {
   searchQuery: string;
@@ -85,6 +86,7 @@ export function CRMHeader({
 }: CRMHeaderProps) {
   const [creators, setCreators] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
+  const [openSheet, setOpenSheet] = useState(false);
 
   const getCreators = async () => {
     const data = await getDataFromRedis("creators");
@@ -100,15 +102,15 @@ export function CRMHeader({
     getBrands();
   }, []);
 
-  const handleLogout = async () => {
-    localStorage.removeItem("user");
-    await logoutUser();
-  };
+  // const handleLogout = async () => {
+  //   localStorage.removeItem("user");
+  //   await logoutUser();
+  // };
 
   return (
-    <header className="border-b border-border bg-card px-6 py-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+    <header className="border-b border-border bg-card px-6 py-4 flex md:flex-col">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mr-0 md:mr-9">
+        <div className="flex items-center gap-3 mt-0 md:mt-3 lg:mt-0">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
             <Users className="h-5 w-5 text-primary" />
           </div>
@@ -116,49 +118,46 @@ export function CRMHeader({
             <h1 className="text-xl whitespace-nowrap font-semibold text-foreground">
               Influencer CRM
             </h1>
-            {/* <p className="text-sm text-muted-foreground">
-              {totalInfluencers} influencer{totalInfluencers !== 1 ? "s" : ""}{" "}
-              in database
-            </p> */}
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 pt-0 md:pt-4 lg:pt-0">
+        <div className="flex flex-wrap items-center gap-3 pt-0 md:pt-4 lg:pt-0 ">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search influencers..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-48 pl-9 bg-secondary/50 border-border text-white"
+              className="w-full md:w-40 lg:w-full pl-9 bg-secondary/50 border-border text-white"
             />
           </div>
+          <div className="gap-2 hidden md:flex">
+            <Select value={selectedCreator} onValueChange={onCreatorChange}>
+              <SelectTrigger className="w-28 lg:w-full bg-secondary/50 border-border text-neutral-400">
+                <SelectValue placeholder="Creator" />
+              </SelectTrigger>
+              <SelectContent>
+                {creators.map((creator) => (
+                  <SelectItem key={creator.id} value={creator.id}>
+                    {creator.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={selectedCreator} onValueChange={onCreatorChange}>
-            <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
-              <SelectValue placeholder="Creator" />
-            </SelectTrigger>
-            <SelectContent>
-              {creators.map((creator) => (
-                <SelectItem key={creator.id} value={creator.id}>
-                  {creator.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedBrand} onValueChange={onSelectedBrandChange}>
-            <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
-              <SelectValue placeholder="Select Brand" />
-            </SelectTrigger>
-            <SelectContent>
-              {brands.map((brand) => (
-                <SelectItem key={brand.name} value={brand.name}>
-                  {brand.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedBrand} onValueChange={onSelectedBrandChange}>
+              <SelectTrigger className="w-28 lg:w-full bg-secondary/50 border-border text-neutral-400">
+                <SelectValue placeholder="Select    Brand" />
+              </SelectTrigger>
+              <SelectContent>
+                {brands.map((brand) => (
+                  <SelectItem key={brand.name} value={brand.name}>
+                    {brand.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           {/* <Select value={selectedYear} onValueChange={onYearChange}>
             <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
@@ -187,12 +186,12 @@ export function CRMHeader({
             </SelectContent>
           </Select> */}
 
-          <Button variant="outline" onClick={onExport} className="gap-2">
+          {/* <Button variant="outline" onClick={onExport} className="gap-2">
             <Download className="h-4 w-4 text-neutral-400" />
             <span className="text-neutral-400 font-normal">Export Excel</span>
-          </Button>
+          </Button> */}
 
-          {role === "ADMIN" && (
+          {/* {role === "ADMIN" && (
             <>
               <Button onClick={() => openAddBrand(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
@@ -203,20 +202,43 @@ export function CRMHeader({
                 <span className="hidden md:inline">Add Creator</span>
               </Button>
             </>
-          )}
-          <Button onClick={onAddClick} className="gap-2">
-            <Plus className="h-4 w-4" />
-            <span className="hidden md:inline">Add Influencer</span>
-          </Button>
+          )} */}
           <Button
+            onClick={onAddClick}
+            className="gap-2 right-6 min-[765px]:static max-[613]:absolute
+            "
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden md:inline">Add</span>
+            <span className="hidden lg:inline">Influencer</span>
+          </Button>
+          {/* <Button
             onClick={handleLogout}
             className="gap-2"
             variant={"destructive"}
           >
             <LogOutIcon className="h-4 w-4" />
             <span className="hidden md:inline">Logout</span>
-          </Button>
+          </Button> */}
         </div>
+      </div>
+      <div className="mt-2 md:mt-4 flex h-8 justify-start items-start absolute right-6 md:right-5 lg:top-1">
+        <OptionsSheet
+          onOpenChange={setOpenSheet}
+          open={openSheet}
+          onMonthChange={onMonthChange}
+          onYearChange={onYearChange}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedMonth}
+          role={role}
+          onCreatorChange={onCreatorChange}
+          onExport={onExport}
+          onSelectedBrandChange={onSelectedBrandChange}
+          openAddBrand={openAddBrand}
+          openAddCreator={openAddCreator}
+          selectedBrand={selectedBrand}
+          selectedCreator={selectedCreator}
+        />
       </div>
     </header>
   );
