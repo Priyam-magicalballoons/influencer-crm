@@ -386,7 +386,7 @@ const page = () => {
         role={role}
       />
 
-      <StatsCards influencers={influencers} />
+      <StatsCards influencers={filteredInfluencers} />
 
       <div className="px-6 pb-6">
         <div className="rounded-lg border border-border bg-card overflow-hidden">
