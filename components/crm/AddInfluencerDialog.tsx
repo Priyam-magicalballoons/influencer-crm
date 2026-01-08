@@ -491,8 +491,12 @@ export function AddInfluencerDialog({
                           .slice(0, 10)
                       : ""
                   }
+                  // onChange={(e) => console.log(new Date(e.target.value))}
                   onChange={(e) =>
-                    updateField("order_date", e.target.value || "")
+                    updateField(
+                      "order_date",
+                      (new Date(e.target.value) as any) || ""
+                    )
                   }
                   className="bg-secondary/50 border-border"
                 />
@@ -510,7 +514,10 @@ export function AddInfluencerDialog({
                       : ""
                   }
                   onChange={(e) =>
-                    updateField("receive_date", e.target.value || "")
+                    updateField(
+                      "receive_date",
+                      (new Date(e.target.value) as any) || ""
+                    )
                   }
                   className="bg-secondary/50 border-border"
                 />
@@ -528,7 +535,10 @@ export function AddInfluencerDialog({
                       : ""
                   }
                   onChange={(e) =>
-                    updateField("published_date", e.target.value || "")
+                    updateField(
+                      "published_date",
+                      (new Date(e.target.value) as any) || ""
+                    )
                   }
                   className="bg-secondary/50 border-border"
                 />
@@ -662,7 +672,10 @@ export function AddInfluencerDialog({
                       : ""
                   }
                   onChange={(e) =>
-                    updateField("payment_date", e.target.value || "")
+                    updateField(
+                      "payment_date",
+                      (new Date(e.target.value) as any) || ""
+                    )
                   }
                   className="bg-secondary/50 border-border"
                 />
@@ -710,7 +723,10 @@ export function AddInfluencerDialog({
                       : ""
                   }
                   onChange={(e) =>
-                    updateField("payment_done", e.target.value || "")
+                    updateField(
+                      "payment_done",
+                      (new Date(e.target.value) as any) || ""
+                    )
                   }
                   className="bg-secondary/50 border-border"
                 />
