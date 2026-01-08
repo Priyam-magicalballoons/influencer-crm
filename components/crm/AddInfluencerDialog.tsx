@@ -104,7 +104,7 @@ export function AddInfluencerDialog({
         payout: editingInfluencer.payout || 0,
         product_amount: editingInfluencer.product_amount || 0,
         total_amount: editingInfluencer.total_amount || 0,
-        order_date: editingInfluencer.order_date,
+        order_date: editingInfluencer.order_date ?? "",
         receive_date: editingInfluencer.receive_date ?? "",
         published_date: editingInfluencer.published_date ?? "",
         reel_link: editingInfluencer.reel_link || "",
@@ -131,6 +131,7 @@ export function AddInfluencerDialog({
     }
   }, [editingInfluencer, open]);
 
+  console.log(form);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.profile || !form.type || !form.brand_name) {
@@ -483,7 +484,13 @@ export function AddInfluencerDialog({
                 <Input
                   id="order_date"
                   type="date"
-                  value={form.order_date || ""}
+                  value={
+                    (form.order_date as any) instanceof Date
+                      ? new Date(form.order_date as string)
+                          .toISOString()
+                          .slice(0, 10)
+                      : ""
+                  }
                   onChange={(e) =>
                     updateField("order_date", e.target.value || "")
                   }
@@ -495,7 +502,13 @@ export function AddInfluencerDialog({
                 <Input
                   id="receive_date"
                   type="date"
-                  value={form.receive_date || ""}
+                  value={
+                    (form.receive_date as any) instanceof Date
+                      ? new Date(form.receive_date as string)
+                          .toISOString()
+                          .slice(0, 10)
+                      : ""
+                  }
                   onChange={(e) =>
                     updateField("receive_date", e.target.value || "")
                   }
@@ -507,7 +520,13 @@ export function AddInfluencerDialog({
                 <Input
                   id="published_date"
                   type="date"
-                  value={form.published_date || ""}
+                  value={
+                    (form.published_date as any) instanceof Date
+                      ? new Date(form.published_date as string)
+                          .toISOString()
+                          .slice(0, 10)
+                      : ""
+                  }
                   onChange={(e) =>
                     updateField("published_date", e.target.value || "")
                   }
@@ -635,7 +654,13 @@ export function AddInfluencerDialog({
                 <Input
                   id="payment_date"
                   type="date"
-                  value={form.payment_date || ""}
+                  value={
+                    (form.payment_date as any) instanceof Date
+                      ? new Date(form.payment_date as string)
+                          .toISOString()
+                          .slice(0, 10)
+                      : ""
+                  }
                   onChange={(e) =>
                     updateField("payment_date", e.target.value || "")
                   }
@@ -677,7 +702,13 @@ export function AddInfluencerDialog({
                 <Input
                   id="payment_done"
                   type="date"
-                  value={form.payment_done || ""}
+                  value={
+                    (form.payment_done as any) instanceof Date
+                      ? new Date(form.payment_done as string)
+                          .toISOString()
+                          .slice(0, 10)
+                      : ""
+                  }
                   onChange={(e) =>
                     updateField("payment_done", e.target.value || "")
                   }
