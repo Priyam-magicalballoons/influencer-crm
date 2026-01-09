@@ -28,6 +28,7 @@ import {
 } from "@/lib/types";
 import { getDataFromRedis } from "@/redis";
 import { toast } from "sonner";
+import { format, parse } from "date-fns";
 // import { handleNumberStep } from "@/lib/helpers";
 
 interface AddInfluencerDialogProps {
@@ -213,6 +214,19 @@ export function AddInfluencerDialog({
 
     onChange(String(next));
   }
+
+  const getFormattedDate = (date: string) => {
+    const d = new Date(date);
+
+    const formatted =
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0");
+    return formatted;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto bg-card border-border">
@@ -486,12 +500,9 @@ export function AddInfluencerDialog({
                   type="date"
                   value={
                     (form.order_date as any) instanceof Date
-                      ? new Date(form.order_date as string)
-                          .toISOString()
-                          .slice(0, 10)
+                      ? getFormattedDate(form.order_date as string)
                       : ""
                   }
-                  // onChange={(e) => console.log(new Date(e.target.value))}
                   onChange={(e) =>
                     updateField(
                       "order_date",
@@ -508,9 +519,7 @@ export function AddInfluencerDialog({
                   type="date"
                   value={
                     (form.receive_date as any) instanceof Date
-                      ? new Date(form.receive_date as string)
-                          .toISOString()
-                          .slice(0, 10)
+                      ? getFormattedDate(form.receive_date as string)
                       : ""
                   }
                   onChange={(e) =>
@@ -529,9 +538,7 @@ export function AddInfluencerDialog({
                   type="date"
                   value={
                     (form.published_date as any) instanceof Date
-                      ? new Date(form.published_date as string)
-                          .toISOString()
-                          .slice(0, 10)
+                      ? getFormattedDate(form.published_date as string)
                       : ""
                   }
                   onChange={(e) =>
@@ -666,9 +673,7 @@ export function AddInfluencerDialog({
                   type="date"
                   value={
                     (form.payment_date as any) instanceof Date
-                      ? new Date(form.payment_date as string)
-                          .toISOString()
-                          .slice(0, 10)
+                      ? getFormattedDate(form.payment_date as string)
                       : ""
                   }
                   onChange={(e) =>
@@ -717,9 +722,7 @@ export function AddInfluencerDialog({
                   type="date"
                   value={
                     (form.payment_done as any) instanceof Date
-                      ? new Date(form.payment_done as string)
-                          .toISOString()
-                          .slice(0, 10)
+                      ? getFormattedDate(form.payment_done as string)
                       : ""
                   }
                   onChange={(e) =>
