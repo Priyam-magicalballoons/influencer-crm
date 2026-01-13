@@ -1,6 +1,13 @@
 "use client";
 
-import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import {
+  ArrowDownUpIcon,
+  ExternalLink,
+  FilterIcon,
+  Pencil,
+  SortAscIcon,
+  Trash2,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,6 +26,12 @@ interface InfluencerTableProps {
   onEdit: (influencer: Influencer) => void;
   onDelete: (influencer: Influencer) => void;
   role: "ADMIN" | "CREATOR";
+  sortTotalAmount: string;
+  setSortTotalAmount: (value: string) => void;
+  sortFollowers: string;
+  setSortFollowers: (value: string) => void;
+  sortApproval: string;
+  setSortApproval: (value: string) => void;
 }
 
 function formatNumber(num: number): string {
@@ -49,6 +62,12 @@ export function InfluencerTable({
   onEdit,
   onDelete,
   role,
+  sortTotalAmount,
+  setSortTotalAmount,
+  sortFollowers,
+  setSortFollowers,
+  sortApproval,
+  setSortApproval,
 }: InfluencerTableProps) {
   if (influencers.length === 0) {
     return (
@@ -86,13 +105,23 @@ export function InfluencerTable({
             <TableHead className="min-w-25 text-muted-foreground font-medium">
               Profile
             </TableHead>
-            <TableHead className="min-w-25 text-muted-foreground font-medium">
-              Followers
+            <TableHead
+              className="min-w-25 text-muted-foreground font-medium flex items-center gap-1 px-3 cursor-pointer"
+              onClick={() => {
+                setSortApproval("");
+                setSortTotalAmount("");
+                sortFollowers === "desc"
+                  ? setSortFollowers("asc")
+                  : setSortFollowers("desc");
+              }}
+            >
+              <p>Followers</p>
+              <ArrowDownUpIcon className="size-3" />
             </TableHead>
-            <TableHead className="min-w-35 text-muted-foreground font-medium">
+            <TableHead className="min-w-35 text-muted-foreground font-medium text-center">
               Type
             </TableHead>
-            <TableHead className="min-w-45 text-muted-foreground font-medium">
+            <TableHead className="min-w-45 text-muted-foreground font-medium text-center">
               Email
             </TableHead>
             <TableHead className="min-w-32.5 text-muted-foreground font-medium">
@@ -104,8 +133,18 @@ export function InfluencerTable({
             <TableHead className="min-w-25 text-muted-foreground font-medium">
               Product Amt
             </TableHead>
-            <TableHead className="min-w-25 text-muted-foreground font-medium">
-              Total Amt
+            <TableHead
+              className="min-w-25 text-muted-foreground font-medium flex items-center gap-1 px-3 cursor-pointer"
+              onClick={() => {
+                setSortApproval("");
+                setSortFollowers("");
+                sortTotalAmount === "desc"
+                  ? setSortTotalAmount("asc")
+                  : setSortTotalAmount("desc");
+              }}
+            >
+              <p>Total Amt</p>
+              <ArrowDownUpIcon className="size-3" />
             </TableHead>
             <TableHead className="min-w-27.5 text-muted-foreground font-medium">
               Order Date
@@ -149,8 +188,18 @@ export function InfluencerTable({
             <TableHead className="min-w-30 text-muted-foreground font-medium">
               Payment Done
             </TableHead>
-            <TableHead className="min-w-30 text-muted-foreground font-medium">
-              Approval Required
+            <TableHead
+              className="min-w-25 text-muted-foreground font-medium flex items-center gap-1 px-3 cursor-pointer"
+              onClick={() => {
+                setSortFollowers("");
+                setSortTotalAmount("");
+                sortApproval === "no"
+                  ? setSortApproval("yes")
+                  : setSortApproval("no");
+              }}
+            >
+              <p>Approval Required</p>
+              <ArrowDownUpIcon className="size-3" />
             </TableHead>
             <TableHead className="min-w-30 text-muted-foreground font-medium text-center">
               Ask Price
@@ -169,6 +218,7 @@ export function InfluencerTable({
               key={influencer.id}
               className={`hover:bg-muted/50 transition-colors ${
                 influencer.approval_required === "YES" &&
+                !influencer.approval_status &&
                 !influencer.approval_comment &&
                 "bg-red-900 hover:bg-red-900/80"
               }
@@ -218,7 +268,7 @@ export function InfluencerTable({
                   </a>
                 )}
               </TableCell>
-              <TableCell className="text-foreground">
+              <TableCell className="text-foreground text-center">
                 {influencer.followers}
               </TableCell>
               <TableCell>
@@ -241,7 +291,7 @@ export function InfluencerTable({
               <TableCell className="text-foreground">
                 {formatCurrency(Number(influencer.product_amount))}
               </TableCell>
-              <TableCell className="text-foreground font-semibold">
+              <TableCell className="text-foreground font-semibold text-center">
                 {formatCurrency(Number(influencer.total_amount))}
               </TableCell>
               <TableCell className="text-muted-foreground">
