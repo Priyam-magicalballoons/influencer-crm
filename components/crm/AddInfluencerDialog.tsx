@@ -132,7 +132,7 @@ export function AddInfluencerDialog({
     }
   }, [editingInfluencer, open]);
 
-  console.log(form);
+  // console.log(form);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.profile || !form.type || !form.brand_name) {
