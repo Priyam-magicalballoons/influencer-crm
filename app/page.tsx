@@ -132,6 +132,9 @@ const page = () => {
   const [editingInfluencer, setEditingInfluencer] = useState<Influencer | null>(
     null
   );
+  const [sortTotalAmount, setSortTotalAmount] = useState("");
+  const [sortFollowers, setSortFollowers] = useState("");
+  const [sortApproval, setSortApproval] = useState("");
   const [deleteInfluencer, setDeleteInfluencer] = useState<Influencer | null>(
     null
   );
@@ -187,6 +190,39 @@ const page = () => {
       });
     }
 
+    if (sortTotalAmount) {
+      sortTotalAmount === "asc"
+        ? (filtered = filtered.sort((a, b) => a.total_amount - b.total_amount))
+        : (filtered = filtered.sort((a, b) => b.total_amount - a.total_amount));
+    }
+
+    if (sortFollowers) {
+      const parseFollowers = (value: any) => {
+        if (typeof value === "string" && value.toLowerCase().endsWith("k")) {
+          return Number(value.toLowerCase().replace("k", "")) * 1000;
+        }
+        return Number(value);
+      };
+      filtered = filtered.sort((a, b) => {
+        const aFollowers = parseFollowers(a.followers);
+        const bFollowers = parseFollowers(b.followers);
+
+        return sortFollowers === "asc"
+          ? aFollowers - bFollowers
+          : bFollowers - aFollowers;
+      });
+    }
+
+    if (sortApproval) {
+      sortApproval === "yes"
+        ? (filtered = filtered.sort((a, b) =>
+            a.approval_required.localeCompare(b.approval_required)
+          ))
+        : (filtered = filtered.sort((a, b) =>
+            b.approval_required.localeCompare(a.approval_required)
+          ));
+    }
+
     return filtered;
   }, [
     influencers,
@@ -195,6 +231,9 @@ const page = () => {
     selectedYear,
     selectedCreator,
     selectedBrand,
+    sortTotalAmount,
+    sortFollowers,
+    sortApproval,
   ]);
 
   const handleExportExcel = useCallback(() => {
@@ -395,6 +434,12 @@ const page = () => {
             onEdit={openEditDialog}
             onDelete={setDeleteInfluencer}
             role={role}
+            sortTotalAmount={sortTotalAmount}
+            setSortTotalAmount={setSortTotalAmount}
+            sortFollowers={sortFollowers}
+            setSortFollowers={setSortFollowers}
+            sortApproval={sortApproval}
+            setSortApproval={setSortApproval}
           />
         </div>
       </div>
