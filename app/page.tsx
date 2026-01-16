@@ -190,20 +190,27 @@ const page = () => {
       });
     }
 
-    if (sortTotalAmount) {
-      sortTotalAmount === "asc"
-        ? (filtered = filtered.sort((a, b) => a.total_amount - b.total_amount))
-        : (filtered = filtered.sort((a, b) => b.total_amount - a.total_amount));
-    }
-
     if (sortFollowers) {
-      const parseFollowers = (value: any) => {
-        if (typeof value === "string" && value.toLowerCase().endsWith("k")) {
-          return Number(value.toLowerCase().replace("k", "")) * 1000;
+      const parseFollowers = (value: string | number): number => {
+        if (typeof value === "number") return value;
+
+        if (typeof value === "string") {
+          const lower = value.toLowerCase();
+
+          if (lower.endsWith("k")) {
+            return parseFloat(lower) * 1_000;
+          }
+
+          if (lower.endsWith("m")) {
+            return parseFloat(lower) * 1_000_000;
+          }
         }
-        return Number(value);
+
+        const parsed = Number(value);
+        return isNaN(parsed) ? 0 : parsed;
       };
-      filtered = filtered.sort((a, b) => {
+
+      filtered = [...filtered].sort((a, b) => {
         const aFollowers = parseFollowers(a.followers);
         const bFollowers = parseFollowers(b.followers);
 
@@ -211,6 +218,12 @@ const page = () => {
           ? aFollowers - bFollowers
           : bFollowers - aFollowers;
       });
+    }
+
+    if (sortTotalAmount) {
+      sortTotalAmount === "asc"
+        ? (filtered = filtered.sort((a, b) => a.total_amount - b.total_amount))
+        : (filtered = filtered.sort((a, b) => b.total_amount - a.total_amount));
     }
 
     if (sortApproval) {
