@@ -8,7 +8,7 @@ const secret = process.env.JWT_SECRET!;
 
 export async function createAccessToken(user: { id: string; role?: string }) {
   return jwt.sign(user, secret, {
-    expiresIn: "10s",
+    expiresIn: "10m",
     algorithm: "HS256",
   });
 }
@@ -51,8 +51,8 @@ export async function verifySession() {
   await sql`
     INSERT INTO sessions (id, user_id, role,expires_at)
     VALUES (${newRefresh}, ${userId},${role}, ${new Date(
-    Date.now() + 60 * 1000
-  )})
+      Date.now() + 60 * 1000,
+    )})
   `;
 
   const newAccess = await createAccessToken({

@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+  cache,
+  memo,
+} from "react";
 import { CRMHeader } from "@/components/crm/CRMHeader";
 import { StatsCards } from "@/components/crm/StatsCards";
 import { InfluencerTable } from "@/components/crm/InfluencerTable";
@@ -122,21 +130,25 @@ import AddCreator from "@/components/crm/AddCreator";
 const page = () => {
   const [influencers, setInfluencers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState(
+    String(new Date().getMonth() + 1).padStart(2, "0"),
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [openCreatorDialog, setOpenCreatorDialog] = useState(false);
   const [openBrandDialog, setOpenBrandDialog] = useState(false);
-  const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedYear, setSelectedYear] = useState(
+    String(new Date().getFullYear()),
+  );
   const [selectedCreator, setSelectedCreator] = useState("0");
   const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [editingInfluencer, setEditingInfluencer] = useState<Influencer | null>(
-    null
+    null,
   );
   const [sortTotalAmount, setSortTotalAmount] = useState("");
   const [sortFollowers, setSortFollowers] = useState("");
   const [sortApproval, setSortApproval] = useState("");
   const [deleteInfluencer, setDeleteInfluencer] = useState<Influencer | null>(
-    null
+    null,
   );
   const [role, setRole] = useState<"ADMIN" | "CREATOR">("CREATOR");
 
@@ -156,7 +168,7 @@ const page = () => {
       filtered = filtered.filter((influencer) => {
         if (!influencer.created_at) return false;
         const [year, month] = format(influencer.created_at, "yyyy-MM-dd").split(
-          "-"
+          "-",
         );
 
         const yearMatch = selectedYear === "all" || year === selectedYear;
@@ -174,7 +186,7 @@ const page = () => {
           (influencer.email &&
             influencer.email!.toLowerCase().includes(query)) ||
           (influencer.profile &&
-            influencer.profile.toLowerCase().includes(query))
+            influencer.profile.toLowerCase().includes(query)),
       );
     }
 
@@ -229,10 +241,10 @@ const page = () => {
     if (sortApproval) {
       sortApproval === "yes"
         ? (filtered = filtered.sort((a, b) =>
-            a.approval_required.localeCompare(b.approval_required)
+            a.approval_required.localeCompare(b.approval_required),
           ))
         : (filtered = filtered.sort((a, b) =>
-            b.approval_required.localeCompare(a.approval_required)
+            b.approval_required.localeCompare(a.approval_required),
           ));
     }
 
@@ -331,7 +343,7 @@ const page = () => {
           return updatedInfluencer; // replace in array
         }
         return inf;
-      })
+      }),
     );
 
     const update = await updateInfluencer(updatedInfluencer);
@@ -339,7 +351,7 @@ const page = () => {
     if (update?.status === 500) {
       toast.error("Error in updating influencer");
       setInfluencers((prev) =>
-        prev.map((inf) => (inf.id === temp!.id ? temp : inf))
+        prev.map((inf) => (inf.id === temp!.id ? temp : inf)),
       );
       return;
     }
