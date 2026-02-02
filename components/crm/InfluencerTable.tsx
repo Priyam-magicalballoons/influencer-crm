@@ -234,9 +234,9 @@ export function InfluencerTable({
                     influencer.reel_link &&
                     "bg-orange-500 hover:bg-orange-500/80"
                   } ${
-                  influencer.payment_status === "Completed" &&
-                  "bg-green-500 hover:bg-green-500/80"
-                }`}
+                    influencer.payment_status === "Completed" &&
+                    "bg-green-500 hover:bg-green-500/80"
+                  }`}
               ></TableCell>
               <TableCell className="font-medium text-foreground text-center">
                 {index + 1}
@@ -359,7 +359,7 @@ export function InfluencerTable({
               <TableCell>
                 <Badge
                   variant={getPaymentStatusVariant(
-                    influencer.payment_status || "Pending"
+                    influencer.payment_status || "Pending",
                   )}
                 >
                   {influencer.payment_status}
@@ -388,7 +388,7 @@ export function InfluencerTable({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                    className="h-8 w-8 text-muted-foreground hover:text-primary cursor-pointer"
                     onClick={() => onEdit(influencer)}
                   >
                     <Pencil className="h-4 w-4" />
@@ -397,7 +397,7 @@ export function InfluencerTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="cursor-pointer h-8 w-8 text-muted-foreground hover:text-destructive"
                       onClick={() => onDelete(influencer)}
                     >
                       <Trash2 className="h-4 w-4" />

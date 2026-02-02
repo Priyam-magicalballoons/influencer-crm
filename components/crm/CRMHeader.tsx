@@ -22,31 +22,6 @@ import { getDataFromRedis } from "@/redis";
 import { logoutUser } from "@/lib/helpers";
 import OptionsSheet from "./OptionsSheet";
 
-// const months = [
-//   { value: "all", label: "All Months" },
-//   { value: "01", label: "January" },
-//   { value: "02", label: "February" },
-//   { value: "03", label: "March" },
-//   { value: "04", label: "April" },
-//   { value: "05", label: "May" },
-//   { value: "06", label: "June" },
-//   { value: "07", label: "July" },
-//   { value: "08", label: "August" },
-//   { value: "09", label: "September" },
-//   { value: "10", label: "October" },
-//   { value: "11", label: "November" },
-//   { value: "12", label: "December" },
-// ];
-
-// const currentYear = new Date().getFullYear();
-// const years = [
-//   { value: "all", label: "All Years" },
-//   ...Array.from({ length: 10 }, (_, i) => ({
-//     value: (currentYear - i).toString(),
-//     label: (currentYear - i).toString(),
-//   })),
-// ];
-
 interface CRMHeaderProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -102,11 +77,6 @@ export function CRMHeader({
     getBrands();
   }, []);
 
-  // const handleLogout = async () => {
-  //   localStorage.removeItem("user");
-  //   await logoutUser();
-  // };
-
   return (
     <header className="border-b border-border bg-card px-6 py-4 flex md:flex-col">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mr-0 md:mr-9">
@@ -158,68 +128,15 @@ export function CRMHeader({
               </SelectContent>
             </Select>
           </div>
-
-          {/* <Select value={selectedYear} onValueChange={onYearChange}>
-            <SelectTrigger className="w-30 bg-secondary/50 border-border text-neutral-400">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((year) => (
-                <SelectItem key={year.value} value={year.value}>
-                  {year.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select> */}
-
-          {/* <Select value={selectedMonth} onValueChange={onMonthChange}>
-            <SelectTrigger className="w-34 md:w-40 bg-secondary/50 border-border text-neutral-400">
-              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select> */}
-
-          {/* <Button variant="outline" onClick={onExport} className="gap-2">
-            <Download className="h-4 w-4 text-neutral-400" />
-            <span className="text-neutral-400 font-normal">Export Excel</span>
-          </Button> */}
-
-          {/* {role === "ADMIN" && (
-            <>
-              <Button onClick={() => openAddBrand(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                <span className="hidden md:inline">Add Brand</span>
-              </Button>
-              <Button onClick={() => openAddCreator(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                <span className="hidden md:inline">Add Creator</span>
-              </Button>
-            </>
-          )} */}
           <Button
             onClick={onAddClick}
-            className="gap-2 right-6 min-[765px]:static max-[613]:absolute
+            className="gap-2 right-6 min-[765px]:static max-[613]:absolute cursor-pointer
             "
           >
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline">Add</span>
             <span className="hidden lg:inline">Influencer</span>
           </Button>
-          {/* <Button
-            onClick={handleLogout}
-            className="gap-2"
-            variant={"destructive"}
-          >
-            <LogOutIcon className="h-4 w-4" />
-            <span className="hidden md:inline">Logout</span>
-          </Button> */}
         </div>
       </div>
       <div className="mt-2 md:mt-4 flex h-8 justify-start items-start absolute right-6 md:right-5 lg:top-1">
@@ -229,7 +146,7 @@ export function CRMHeader({
           onMonthChange={onMonthChange}
           onYearChange={onYearChange}
           selectedMonth={selectedMonth}
-          selectedYear={selectedMonth}
+          selectedYear={selectedYear}
           role={role}
           onCreatorChange={onCreatorChange}
           onExport={onExport}

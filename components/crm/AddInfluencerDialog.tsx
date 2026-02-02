@@ -209,8 +209,8 @@ export function AddInfluencerDialog({
       event.key === "ArrowUp"
         ? current + step
         : current - step < 0
-        ? current
-        : current - step;
+          ? current
+          : current - step;
 
     onChange(String(next));
   }
@@ -506,7 +506,7 @@ export function AddInfluencerDialog({
                   onChange={(e) =>
                     updateField(
                       "order_date",
-                      (new Date(e.target.value) as any) || ""
+                      (new Date(e.target.value) as any) || "",
                     )
                   }
                   className="bg-secondary/50 border-border"
@@ -525,7 +525,7 @@ export function AddInfluencerDialog({
                   onChange={(e) =>
                     updateField(
                       "receive_date",
-                      (new Date(e.target.value) as any) || ""
+                      (new Date(e.target.value) as any) || "",
                     )
                   }
                   className="bg-secondary/50 border-border"
@@ -544,7 +544,7 @@ export function AddInfluencerDialog({
                   onChange={(e) =>
                     updateField(
                       "published_date",
-                      (new Date(e.target.value) as any) || ""
+                      (new Date(e.target.value) as any) || "",
                     )
                   }
                   className="bg-secondary/50 border-border"
@@ -679,7 +679,7 @@ export function AddInfluencerDialog({
                   onChange={(e) =>
                     updateField(
                       "payment_date",
-                      (new Date(e.target.value) as any) || ""
+                      (new Date(e.target.value) as any) || "",
                     )
                   }
                   className="bg-secondary/50 border-border"
@@ -728,7 +728,7 @@ export function AddInfluencerDialog({
                   onChange={(e) =>
                     updateField(
                       "payment_done",
-                      (new Date(e.target.value) as any) || ""
+                      (new Date(e.target.value) as any) || "",
                     )
                   }
                   className="bg-secondary/50 border-border"
@@ -743,10 +743,15 @@ export function AddInfluencerDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="cursor-pointer"
             >
               Cancel
             </Button>
-            <Button type="submit" onClick={handleSubmit}>
+            <Button
+              type="submit"
+              className="cursor-pointer"
+              onClick={handleSubmit}
+            >
               {isEditMode ? "Save Changes" : "Add Influencer"}
             </Button>
           </div>

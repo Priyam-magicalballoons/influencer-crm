@@ -86,6 +86,7 @@ const OptionsSheet = ({
       label: (currentYear - i).toString(),
     })),
   ];
+
   const handleLogout = async () => {
     localStorage.removeItem("user");
     await logoutUser();
@@ -103,13 +104,16 @@ const OptionsSheet = ({
         <div className="grid flex-1 auto-rows-min gap-4 px-4">
           {role === "ADMIN" && (
             <>
-              <Button onClick={() => openAddBrand(true)} className="gap-2">
+              <Button
+                onClick={() => openAddBrand(true)}
+                className="gap-2 cursor-pointer"
+              >
                 <Plus className="h-4 w-4" />
                 <span className="">Add Brand</span>
               </Button>
               <Button onClick={() => openAddCreator(true)} className="gap-2">
                 <Plus className="h-4 w-4" />
-                <span className="">Add Creator</span>
+                <span className="cursor-pointer">Add Creator</span>
               </Button>
             </>
           )}
@@ -144,7 +148,7 @@ const OptionsSheet = ({
           <Button
             variant="outline"
             onClick={onExport}
-            className="gap-2 bg-[#236f4b]"
+            className="gap-2 bg-[#236f4b] cursor-pointer hover:bg-[#236f4b]/50"
           >
             <Download className="h-4 w-4 text-neutral-100 font-bold" />
             <span className="text-neutral-100 font-semibold">Export Excel</span>
@@ -153,7 +157,7 @@ const OptionsSheet = ({
         <SheetFooter>
           <Button
             onClick={handleLogout}
-            className="gap-2"
+            className="gap-2 cursor-pointer"
             variant={"destructive"}
           >
             <LogOutIcon className="h-4 w-4" />

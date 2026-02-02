@@ -125,9 +125,15 @@ const AddCreator = ({ onOpenChange, open }: AddCreatorProps) => {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit" onClick={handleSubmit}>
+            <Button
+              type="submit"
+              className="cursor-pointer"
+              onClick={handleSubmit}
+            >
               Add
             </Button>
           </DialogFooter>

@@ -46,9 +46,13 @@ export function Form({ open, changeIsOpen }: Props) {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" className="cursor-pointer">
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>
